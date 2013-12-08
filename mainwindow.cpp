@@ -7,6 +7,8 @@
 #include <QLabel>
 
 #include "compositorpane.h"
+#include "layerspane.h"
+#include "effectspane.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,18 +16,27 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // add layer list
     QDockWidget* layerListDock = new QDockWidget();
-    QListView* layerList = new QListView();
+    LayersPane* layersPane = new LayersPane();
     _layerModel = new LayerModel();
-    layerList->setModel(_layerModel);
-    layerListDock->setWidget(layerList);
+    layersPane->setModel(_layerModel);
+    layerListDock->setWidget(layersPane);
     layerListDock->setTitleBarWidget(new QLabel("Layers"));
-
     this->addDockWidget(Qt::LeftDockWidgetArea, layerListDock);
+
+    // add layer effects list
+    QDockWidget* effectListDock = new QDockWidget();
+    EffectsPane* effectsPane = new EffectsPane();
+    effectListDock->setWidget(effectsPane);
+    effectListDock->setTitleBarWidget(new QLabel("Layer Effects"));
+    this->addDockWidget(Qt::LeftDockWidgetArea, effectListDock);
 
     connect(ui->actionNewProject, SIGNAL(triggered(bool)), this, SLOT(newProject()));
     connect(ui->actionImport, SIGNAL(triggered(bool)), this, SLOT(importFile()));
     connect(ui->actionExit, SIGNAL(triggered(bool)), this, SLOT(quit()));
+
+
 
     // make a new tab
     CompositorPane* renderPane = new CompositorPane();

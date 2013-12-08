@@ -26,8 +26,9 @@ void LayerModel::addSource(QSharedPointer<Source> source)
     emit(dataChanged(topLeft, topLeft));
 }
 
-Mat LayerModel::composite(int frame)
+Mat LayerModel::composite(int frame, int layer)
 {
-    char *file = "/home/josh.stratton/Pictures/hulu.png";
-    return cv::imread(file, CV_LOAD_IMAGE_COLOR);
+    return _sources[layer]->render(frame);
+    //char *file = "/home/josh.stratton/Pictures/hulu.png";
+    //return cv::imread(file, CV_LOAD_IMAGE_COLOR);
 }

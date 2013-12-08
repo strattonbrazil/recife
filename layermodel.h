@@ -4,7 +4,7 @@
 #include <QAbstractListModel>
 #include <QVector>
 #include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
+//#include <opencv2/highgui/highgui.hpp>
 
 #include "source.h"
 
@@ -19,9 +19,9 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
 
     void addSource(QSharedPointer<Source> source);
-    Mat composite(int frame);
+    Mat composite(int frame, int layer);
 signals:
-    
+
 public slots:
 private:
     QVector<QSharedPointer<Source> > _sources;

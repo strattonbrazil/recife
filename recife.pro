@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = recife
 TEMPLATE = app
 
-LIBS += -lopencv_core -lopencv_highgui -lopencv_ocl
+LIBS += -lopencv_core -lopencv_highgui -lopencv_ocl -lopencv_imgproc
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -19,14 +19,20 @@ SOURCES += main.cpp\
     source.cpp \
     compositorpane.cpp \
     renderview.cpp \
-    utils.cpp
+    utils.cpp \
+    layerspane.cpp \
+    effectspane.cpp
 
 HEADERS  += mainwindow.h \
     layermodel.h \
     source.h \
     compositorpane.h \
     renderview.h \
-    utils.h
+    utils.h \
+    layerspane.h \
+    effectspane.h
 
 FORMS    += mainwindow.ui \
-    compositorpane.ui
+    compositorpane.ui \
+    layerspane.ui \
+    effectspane.ui

@@ -19,6 +19,8 @@ public:
     ~CompositorPane();
     
     void setModel(LayerModel* model);
+public slots:
+    void viewportChanged(int index);
 private:
     Ui::CompositorPane *ui;
     RenderView* _renderView;

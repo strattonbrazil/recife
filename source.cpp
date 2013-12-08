@@ -5,11 +5,13 @@
 #include <stdexcept>
 #include <QFile>
 #include <QDir>
+#include <opencv2/highgui/highgui.hpp>
 
 ImageSource::ImageSource(QString fileName)
 {
     // TODO: use a namebase utility function here
     _label = fileName.split("/").last();
+    _imagePath = fileName;
 }
 
 QString ImageSource::label()
@@ -17,11 +19,19 @@ QString ImageSource::label()
     return _label;
 }
 
+Mat ImageSource::render(int frame)
+{
+    return cv::imread(_imagePath.toStdString(), CV_LOAD_IMAGE_COLOR);
+}
+
 class ImageHandler : public FileHandler
 {
     QSharedPointer<Source> process(QString fileName)
     {
         if (fileName.endsWith(".jpg")) {
+            return QSharedPointer<Source>(new ImageSource(fileName));
+        }
+        else if (fileName.endsWith(".png")) {
             return QSharedPointer<Source>(new ImageSource(fileName));
         }
 
