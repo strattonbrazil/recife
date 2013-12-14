@@ -5,6 +5,8 @@
 #include <QVector>
 #include <opencv2/core/core.hpp>
 
+#include "effectsmodel.h"
+
 using namespace cv;
 
 class FileHandler;
@@ -16,6 +18,10 @@ public:
     virtual Mat render(int frame) = 0;
 
     static QSharedPointer<Source> getSource(QString fileName);
+    EffectsModel* effectsModel();
+    void addEffect(QSharedPointer<Effect> effect);
+protected:
+    EffectsModel* _effectsList;
 };
 
 class ImageSource : public Source

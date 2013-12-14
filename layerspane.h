@@ -2,6 +2,7 @@
 #define LAYERSPANE_H
 
 #include <QWidget>
+#include <QListView>
 
 #include "layermodel.h"
 
@@ -17,7 +18,8 @@ public:
     explicit LayersPane(QWidget *parent = 0);
     ~LayersPane();
     void setModel(LayerModel* model);
-    
+    QListView* layersList();
+    QSharedPointer<Source> selectedLayer();
 private:
     Ui::LayersPane *ui;
 };

@@ -17,3 +17,18 @@ void LayersPane::setModel(LayerModel *model)
 {
     ui->layersList->setModel(model);
 }
+
+QListView* LayersPane::layersList()
+{
+    return ui->layersList;
+}
+
+QSharedPointer<Source> LayersPane::selectedLayer()
+{
+    QModelIndexList indices = ui->layersList->selectionModel()->selectedRows();
+    if (indices.length() == 0)
+        return QSharedPointer<Source>(0);
+
+    LayerModel* model = qobject_cast<LayerModel*>(ui->layersList->model());
+    return model->layer(indices.first().row());
+}

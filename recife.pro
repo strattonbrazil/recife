@@ -21,7 +21,9 @@ SOURCES += main.cpp\
     renderview.cpp \
     utils.cpp \
     layerspane.cpp \
-    effectspane.cpp
+    effectspane.cpp \
+    effectsmodel.cpp \
+    effect.cpp
 
 HEADERS  += mainwindow.h \
     layermodel.h \
@@ -30,7 +32,9 @@ HEADERS  += mainwindow.h \
     renderview.h \
     utils.h \
     layerspane.h \
-    effectspane.h
+    effectspane.h \
+    effectsmodel.h \
+    effect.h
 
 FORMS    += mainwindow.ui \
     compositorpane.ui \

@@ -32,3 +32,8 @@ Mat LayerModel::composite(int frame, int layer)
     //char *file = "/home/josh.stratton/Pictures/hulu.png";
     //return cv::imread(file, CV_LOAD_IMAGE_COLOR);
 }
+
+QSharedPointer<Source> LayerModel::layer(int layer)
+{
+    return _sources[layer];
+}

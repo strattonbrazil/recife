@@ -56,9 +56,23 @@ QSharedPointer<Source> Source::getSource(QString fileName)
 
     foreach(FileHandler* handler, fileHandlers) {
         QSharedPointer<Source> src = handler->process(fileName);
-        if (!src.isNull())
+        if (!src.isNull()) {
+            src->_effectsList = 0;
             return src;
+        }
     }
 
     throw std::runtime_error("failed to find appropriate importer");
+}
+
+EffectsModel* Source::effectsModel()
+{
+    if (_effectsList == 0)
+        _effectsList = new EffectsModel();
+    return _effectsList;
+}
+
+void Source::addEffect(QSharedPointer<Effect> effect)
+{
+    _effectsList->addEffect(effect);
 }

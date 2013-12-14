@@ -2,6 +2,7 @@
 #define EFFECTSPANE_H
 
 #include <QWidget>
+#include <QAbstractListModel>
 
 namespace Ui {
 class EffectsPane;
@@ -14,6 +15,7 @@ class EffectsPane : public QWidget
 public:
     explicit EffectsPane(QWidget *parent = 0);
     ~EffectsPane();
+    void setModel(QAbstractListModel* model);
     
 private:
     Ui::EffectsPane *ui;
