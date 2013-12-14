@@ -32,3 +32,9 @@ QSharedPointer<Source> LayersPane::selectedLayer()
     LayerModel* model = qobject_cast<LayerModel*>(ui->layersList->model());
     return model->layer(indices.first().row());
 }
+
+void LayersPane::updateLayer(QSharedPointer<Source> layer)
+{
+    LayerModel* model = qobject_cast<LayerModel*>(ui->layersList->model());
+    model->updateLayer(layer);
+}

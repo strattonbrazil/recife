@@ -29,6 +29,7 @@ public slots:
     void newColorKey();
 private:
     void setProjectActive(bool status);
+    void rerender(QSharedPointer<Source> layer);
 
     Ui::MainWindow *ui;
     LayersPane* _layersPane;

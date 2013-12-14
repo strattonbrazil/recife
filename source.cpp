@@ -19,7 +19,7 @@ QString ImageSource::label()
     return _label;
 }
 
-Mat ImageSource::render(int frame)
+Mat ImageSource::renderBase(int frame)
 {
     return cv::imread(_imagePath.toStdString(), CV_LOAD_IMAGE_COLOR);
 }
@@ -50,6 +50,14 @@ void validate()
     }
 }
 
+Mat Source::render(int frame)
+{
+    Mat base = renderBase(frame);
+    Mat processed = _effectsList->process(base, frame);
+
+    return processed;
+}
+
 QSharedPointer<Source> Source::getSource(QString fileName)
 {
     validate();
@@ -57,7 +65,7 @@ QSharedPointer<Source> Source::getSource(QString fileName)
     foreach(FileHandler* handler, fileHandlers) {
         QSharedPointer<Source> src = handler->process(fileName);
         if (!src.isNull()) {
-            src->_effectsList = 0;
+            src->_effectsList = new EffectsModel();
             return src;
         }
     }

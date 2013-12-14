@@ -10,17 +10,17 @@ class Effect
 {
 public:
     //Effect();
-    virtual QString label();
-    virtual Mat process(Mat in) = 0;
+    QString label();
+    virtual Mat process(Mat in, int frame) = 0;
 protected:
     QString _label;
 };
 
-class ColorKey : public Effect
+class ColorKeyEffect : public Effect
 {
 public:
-    ColorKey();
-    Mat process(Mat in);
+    ColorKeyEffect();
+    Mat process(Mat in, int frame);
 };
 
 #endif // EFFECT_H

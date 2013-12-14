@@ -25,3 +25,12 @@ void EffectsModel::addEffect(QSharedPointer<Effect> effect)
     QModelIndex topLeft = createIndex(0, 0);
     emit(dataChanged(topLeft, topLeft));
 }
+
+Mat EffectsModel::process(Mat in, int frame)
+{
+    for (int i = _effects.size() - 1; i >= 0; i--) {
+        in = _effects[i]->process(in, frame);
+    }
+
+    return in;
+}

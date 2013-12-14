@@ -13,6 +13,7 @@ class EffectsModel : public QAbstractListModel
 public:
     explicit EffectsModel(QObject *parent = 0);
     void addEffect(QSharedPointer<Effect> effect);
+    Mat process(Mat in, int frame);
     
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;

@@ -37,3 +37,13 @@ QSharedPointer<Source> LayerModel::layer(int layer)
 {
     return _sources[layer];
 }
+
+void LayerModel::updateLayer(QSharedPointer<Source> layer)
+{
+    // TODO: actually find the right model index instead of sending
+    // all of them
+    QModelIndex topLeft = createIndex(0, 0);
+    QModelIndex bottomLeft = createIndex(_sources.size()-1, 0);
+
+    emit(dataChanged(topLeft, bottomLeft));
+}

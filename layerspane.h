@@ -20,6 +20,7 @@ public:
     void setModel(LayerModel* model);
     QListView* layersList();
     QSharedPointer<Source> selectedLayer();
+    void updateLayer(QSharedPointer<Source> layer);
 private:
     Ui::LayersPane *ui;
 };

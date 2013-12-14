@@ -83,11 +83,21 @@ void MainWindow::layerSelected(const QModelIndex & current, const QModelIndex & 
     _effectsPane->setModel(layer->effectsModel());
 }
 
+/*
+void MainWindow::rerender(QSharedPointer<Source> layer)
+{
 
+}
+*/
 
 void MainWindow::newColorKey()
 {
     QSharedPointer<Source> layer = _layersPane->selectedLayer();
 
-    layer->addEffect(QSharedPointer<Effect>(new ColorKey()));
+    layer->addEffect(QSharedPointer<Effect>(new ColorKeyEffect()));
+
+    _layersPane->updateLayer(layer);
+    //QModelIndex topLeft = createIndex(0, 0);
+    //emit(dataChanged(topLeft, topLeft));
+    //rerender(layer);
 }

@@ -15,7 +15,8 @@ class Source
 {
 public:
     virtual QString label() = 0;
-    virtual Mat render(int frame) = 0;
+    virtual Mat renderBase(int frame) = 0;
+    Mat render(int frame);
 
     static QSharedPointer<Source> getSource(QString fileName);
     EffectsModel* effectsModel();
@@ -29,7 +30,7 @@ class ImageSource : public Source
 public:
     ImageSource(QString fileName);
     QString label();
-    Mat render(int frame);
+    Mat renderBase(int frame);
 private:
     QString _label;
     QString _imagePath;

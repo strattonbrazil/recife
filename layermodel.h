@@ -21,6 +21,7 @@ public:
     void addSource(QSharedPointer<Source> source);
     Mat composite(int frame, int layer);
     QSharedPointer<Source> layer(int layer);
+    void updateLayer(QSharedPointer<Source> layer);
 signals:
 
 public slots:
