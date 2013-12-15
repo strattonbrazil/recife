@@ -24,6 +24,8 @@ public:
     ColorKeyEffect();
     Mat process(Mat in, int frame);
     int requires() { return Effect::REQUIRE_RGBA; }
+private:
+    char alpha(char r, char g, char b);
 };
 
 #endif // EFFECT_H

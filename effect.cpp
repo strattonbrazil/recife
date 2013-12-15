@@ -9,26 +9,28 @@ ColorKeyEffect::ColorKeyEffect()
 {
     _label = "Color Key";
 }
-#include <iostream>
+
 Mat ColorKeyEffect::process(Mat in, int frame)
 {
     Mat out = Mat::zeros(in.size(), in.type());
-
-    std::cout << in.channels() << std::endl;
 
     for(int i = 0; i < in.rows; i++) {
         for(int j = 0; j < in.cols; j++){
             // TODO: check whether input frame has alpha?
 
-            out.at<Vec4b>(i,j) = in.at<Vec4b>(i,j);
-            //v[0] = 255;
-            //v[1] = 0;
-            //v[2] = 0;
-            //v[3] = 0.5;
+            Vec4b rgba = in.at<Vec4b>(i,j);
+            rgba[3] = alpha(rgba[0], rgba[1], rgba[2]);
+            rgba[2] = 0;
+            out.at<Vec4b>(i,j) = rgba;
         }
     }
 
     return out;
+}
+
+char ColorKeyEffect::alpha(char r, char g, char b)
+{
+    return 128;
 }
 
 
