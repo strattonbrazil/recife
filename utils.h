@@ -6,5 +6,6 @@
 #include <opencv2/highgui/highgui.hpp>
 
 QImage convertMatToQImage(cv::Mat const& src);
+cv::Mat addAlphaChannel(cv::Mat const& src);
 
 #endif // UTILS_H

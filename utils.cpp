@@ -11,3 +11,12 @@ QImage convertMatToQImage(cv::Mat const& src)
      dest2.detach(); // enforce deep copy
      return dest2;
 }
+
+cv::Mat addAlphaChannel(cv::Mat const& src)
+{
+    cv::Mat dst = cv::Mat(src.rows, src.cols, CV_8UC4);
+    int from_to[] = { 0,0, 1,1, 2,2, 3,3 };
+    cv::mixChannels(&src, 3, &dst,1, from_to, 4);
+
+    return dst;
+}

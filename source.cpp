@@ -21,7 +21,7 @@ QString ImageSource::label()
 
 Mat ImageSource::renderBase(int frame)
 {
-    return cv::imread(_imagePath.toStdString(), CV_LOAD_IMAGE_COLOR);
+    return cv::imread(_imagePath.toStdString(), CV_LOAD_IMAGE_UNCHANGED);
 }
 
 class ImageHandler : public FileHandler
