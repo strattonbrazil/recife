@@ -52,6 +52,12 @@ Mat EffectsModel::process(Mat in, int frame)
         }
 
         in = _effects[i]->process(in, frame);
+
+        uchar foo = in.at<Vec4b>(10,10).val[3];
+        if (foo < 128)
+            std::cout << "transparent" << std::endl;
+        else
+            std::cout << "opaque" << std::endl;
     }
 
     return in;

@@ -25,7 +25,7 @@ public:
     Mat process(Mat in, int frame);
     int requires() { return Effect::REQUIRE_RGBA; }
 private:
-    char alpha(char r, char g, char b);
+    uchar alpha(uchar r, uchar g, uchar b);
 };
 
 #endif // EFFECT_H

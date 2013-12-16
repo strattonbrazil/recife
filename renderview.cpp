@@ -54,16 +54,17 @@ void RenderView::drawForeground(QPainter *painter, const QRectF &rect)
 
 void RenderView::drawBackground(QPainter *painter, const QRectF &rect)
 {
-    //QRect viewportRect = mapFromScene(_viewportOverlay->boundingRect()).boundingRect();
     QRect viewportRect = _viewportOverlay->boundingRect().toRect();
     viewportRect.setLeft(viewportRect.left()+VIEWPORT_BORDER);
     viewportRect.setRight(viewportRect.right()-VIEWPORT_BORDER);
     viewportRect.setTop(viewportRect.top()+VIEWPORT_BORDER);
     viewportRect.setBottom(viewportRect.bottom()-VIEWPORT_BORDER);
 
-    //QPen pen(Qt::red, 2, Qt::DashLine);
-    //painter->setPen(pen);
     painter->fillRect(0, 0, scene()->width(), scene()->height(), Qt::black);
+
+    QImage checkers;
+    checkers.load("/home/josh.stratton/Desktop/checkers.png");
+    painter->drawImage(0, 0, checkers);
 }
 
 void RenderView::setModel(LayerModel *model)
@@ -83,8 +84,6 @@ void RenderView::setViewport(int width, int height)
     QPixmap pixmap = QPixmap::fromImage(image);
 
     _viewportOverlay = scene()->addPixmap(pixmap);
-    //this->centerOn(_viewportOverlay);
-    //this->fitInView(_viewportOverlay, Qt::KeepAspectRatio);
 }
 
 void RenderView::showContextMenu(const QPoint &pos)
@@ -105,46 +104,21 @@ void RenderView::showContextMenu(const QPoint &pos)
 
 void RenderView::updateLayers(QModelIndex top, QModelIndex bottom)
 {
+    // TODO: only clear changed layers
+    QList<QGraphicsItem*> toRemove;
+    foreach (QGraphicsItem* item, scene()->items()) {
+        toRemove.append(item);
+    }
+    foreach (QGraphicsItem* item, toRemove) {
+        scene()->removeItem(item);
+    }
+
     for (int layer = top.row(); layer <= bottom.row(); layer++) {
         Mat image = _model->composite(1, layer);
 
         QImage img = convertMatToQImage(image);
         QPixmap pixmap = QPixmap::fromImage(img);
 
-        // TODO: clear previous ones
         this->scene()->addPixmap(pixmap);
     }
-    /*
-    QPixmap px;
-     px.load(argv[1]);
-     QPainter p(&px);
-     p.setPen(Qt::blue);
-     p.drawLine(5,5, 40, 40);
-     p.end();
-     QLabel label;
-     label.setPixmap(px);
-     */
-
-
-
-    //QPainter painter(this);
-    //painter.setRenderHint(QPainter::Antialiasing);
-
-    //painter.fillRect(0, 0, width(), height(), Qt::black);
-
-    /*
-    Mat image = _model->composite(1);
-
-    QImage img = convertMatToQImage(image);
-    QPixmap pixmap = QPixmap::fromImage(img);
-
-    this->scene()->addPixmap(pixmap);
-    */
-
-    //painter.drawImage(0, 0, img);
-    //painter.drawPixmap(0,0,200,200,pixmap);
-
-    //painter.end();
-
-    //std::cout << "woops!" << std::endl;
 }

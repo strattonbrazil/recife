@@ -1,4 +1,5 @@
 #include "effect.h"
+#include <QColor>
 
 QString Effect::label()
 {
@@ -19,8 +20,7 @@ Mat ColorKeyEffect::process(Mat in, int frame)
             // TODO: check whether input frame has alpha?
 
             Vec4b rgba = in.at<Vec4b>(i,j);
-            rgba[3] = alpha(rgba[0], rgba[1], rgba[2]);
-            rgba[2] = 0;
+            rgba.val[3] = saturate_cast<uchar>(alpha(rgba[0], rgba[1], rgba[2]));
             out.at<Vec4b>(i,j) = rgba;
         }
     }
@@ -28,9 +28,20 @@ Mat ColorKeyEffect::process(Mat in, int frame)
     return out;
 }
 
-char ColorKeyEffect::alpha(char r, char g, char b)
+#include <iostream>
+
+uchar ColorKeyEffect::alpha(uchar r, uchar g, uchar b)
 {
-    return 128;
+    qreal h, s, v;
+    //std::cout << (int)r << " " << (int)g << " " << (int)b << std::endl;
+
+    if (g > 100 && r < 20 && b < 20) {
+        return 0;
+    }
+    //QColor color(r, g, b);
+    //color.getHsvF(&h, &s, &v);
+
+    return 255;
 }
 
 
