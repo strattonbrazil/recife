@@ -28,14 +28,13 @@ Mat ColorKeyEffect::process(Mat in, int frame)
     return out;
 }
 
-#include <iostream>
-
 uchar ColorKeyEffect::alpha(uchar r, uchar g, uchar b)
 {
     qreal h, s, v;
     //std::cout << (int)r << " " << (int)g << " " << (int)b << std::endl;
 
-    if (g > 100 && r < 20 && b < 20) {
+    uchar foo = max(r,b);
+    if ((float)g / foo > 2) {
         return 0;
     }
     //QColor color(r, g, b);

@@ -16,7 +16,6 @@ public:
     explicit EffectsPane(QWidget *parent = 0);
     ~EffectsPane();
     void setModel(QAbstractListModel* model);
-    
 private:
     Ui::EffectsPane *ui;
 };

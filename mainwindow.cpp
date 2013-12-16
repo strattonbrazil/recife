@@ -39,6 +39,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionColorKeyEffect, SIGNAL(triggered(bool)), this, SLOT(newColorKey()));
 
+    // add attributes pane
+    QDockWidget* attributeListDock = new QDockWidget();
+    _attributesPane = new AttributesPane();
+    attributeListDock->setWidget(_attributesPane);
+    attributeListDock->setTitleBarWidget(new QLabel("Attributes"));
+    this->addDockWidget(Qt::RightDockWidgetArea, attributeListDock);
+
     // make a new tab
     CompositorPane* renderPane = new CompositorPane();
     renderPane->setModel(_layerModel);
@@ -81,6 +88,8 @@ void MainWindow::layerSelected(const QModelIndex & current, const QModelIndex & 
 
     QSharedPointer<Source> layer = _layerModel->layer(current.row());
     _effectsPane->setModel(layer->effectsModel());
+
+    _attributesPane->setLayer(layer);
 }
 
 /*

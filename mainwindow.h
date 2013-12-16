@@ -7,6 +7,7 @@
 #include "layermodel.h"
 #include "layerspane.h"
 #include "effectspane.h"
+#include "attributespane.h"
 
 namespace Ui {
 class MainWindow;
@@ -35,6 +36,7 @@ private:
     LayersPane* _layersPane;
     LayerModel* _layerModel;
     EffectsPane* _effectsPane;
+    AttributesPane* _attributesPane;
 };
 
 #endif // MAINWINDOW_H

@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     layerspane.cpp \
     effectspane.cpp \
     effectsmodel.cpp \
-    effect.cpp
+    effect.cpp \
+    attributespane.cpp
 
 HEADERS  += mainwindow.h \
     layermodel.h \
@@ -34,9 +35,11 @@ HEADERS  += mainwindow.h \
     layerspane.h \
     effectspane.h \
     effectsmodel.h \
-    effect.h
+    effect.h \
+    attributespane.h
 
 FORMS    += mainwindow.ui \
     compositorpane.ui \
     layerspane.ui \
-    effectspane.ui
+    effectspane.ui \
+    attributespane.ui
