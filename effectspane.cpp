@@ -14,10 +14,25 @@ EffectsPane::~EffectsPane()
     delete ui;
 }
 
-void EffectsPane::setModel(QAbstractListModel *model)
+void EffectsPane::setModel(EffectsModel *model)
 {
     // TODO: swap the card out
     ui->stackedWidget->setCurrentWidget(ui->effectsPage);
 
     ui->effectsList->setModel(model);
+}
+
+QListView* EffectsPane::effectsList()
+{
+    return ui->effectsList;
+}
+
+QSharedPointer<Effect> EffectsPane::selectedEffect()
+{
+    QModelIndexList indices = ui->effectsList->selectionModel()->selectedRows();
+    if (indices.length() == 0)
+        return QSharedPointer<Effect>(0);
+
+    EffectsModel* model = qobject_cast<EffectsModel*>(ui->effectsList->model());
+    return model->effect(indices.first().row());
 }

@@ -24,6 +24,13 @@ Mat ImageSource::renderBase(int frame)
     return cv::imread(_imagePath.toStdString(), CV_LOAD_IMAGE_UNCHANGED);
 }
 
+#include <QLabel>
+
+QWidget* ImageSource::editor()
+{
+    return new QLabel("this is good");
+}
+
 class ImageHandler : public FileHandler
 {
     QSharedPointer<Source> process(QString fileName)

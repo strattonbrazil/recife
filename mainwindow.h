@@ -26,6 +26,7 @@ public slots:
     void quit();
 
     void layerSelected(const QModelIndex & current, const QModelIndex & previous);
+    void effectSelected(const QModelIndex & current, const QModelIndex & previous);
 
     void newColorKey();
 private:

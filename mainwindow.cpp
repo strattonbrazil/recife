@@ -33,6 +33,8 @@ MainWindow::MainWindow(QWidget *parent) :
     effectListDock->setTitleBarWidget(new QLabel("Layer Effects"));
     this->addDockWidget(Qt::LeftDockWidgetArea, effectListDock);
 
+    // connect menu options
+    //
     connect(ui->actionNewProject, SIGNAL(triggered(bool)), this, SLOT(newProject()));
     connect(ui->actionImport, SIGNAL(triggered(bool)), this, SLOT(importFile()));
     connect(ui->actionExit, SIGNAL(triggered(bool)), this, SLOT(quit()));
@@ -82,14 +84,34 @@ void MainWindow::setProjectActive(bool status)
 {
 }
 
+#include <iostream>
+
+
 void MainWindow::layerSelected(const QModelIndex & current, const QModelIndex & previous)
 {
     ui->actionColorKeyEffect->setEnabled(true);
 
+    bool connectEffectSelection = _effectsPane->effectsList()->selectionModel() == 0;
+
     QSharedPointer<Source> layer = _layerModel->layer(current.row());
     _effectsPane->setModel(layer->effectsModel());
 
+    if (connectEffectSelection) {
+        connect(_effectsPane->effectsList()->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), this, SLOT(effectSelected(QModelIndex,QModelIndex)));
+        std::cout << "wiring effect selected" << std::endl;
+    }
+
     _attributesPane->setLayer(layer);
+}
+
+void MainWindow::effectSelected(const QModelIndex & current, const QModelIndex & previous)
+{
+    QSharedPointer<Source> layer = _layersPane->selectedLayer();
+    QSharedPointer<Effect> effect = layer->effectsModel()->effect(current.row()); // _effectsPane->selectedEffect();
+
+    _attributesPane->setEffect(effect);
+
+    std::cout << "selected effect" << std::endl;
 }
 
 /*

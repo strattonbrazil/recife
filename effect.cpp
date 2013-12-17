@@ -43,5 +43,11 @@ uchar ColorKeyEffect::alpha(uchar r, uchar g, uchar b)
     return 255;
 }
 
+#include <QLabel>
+
+QWidget* ColorKeyEffect::editor()
+{
+    return new QLabel("this is another!");
+}
 
 

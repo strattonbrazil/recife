@@ -17,9 +17,11 @@ public:
     ~AttributesPane();
     
     void setLayer(QSharedPointer<Source> layer);
+    void setEffect(QSharedPointer<Effect> effect);
 private:
     Ui::AttributesPane *ui;
     QSharedPointer<Source> _layer;
+    QSharedPointer<Effect> _effect;
 };
 
 #endif // ATTRIBUTESPANE_H

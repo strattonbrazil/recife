@@ -41,3 +41,18 @@ QImage convertMatToQImage(cv::Mat const& unformattedSrc)
      //foo.load("/home/josh.stratton/Pictures/alpha.png");
      //return foo;
 }
+
+void clearLayout(QLayout *layout)
+{
+    QLayoutItem *item;
+    while((item = layout->takeAt(0))) {
+        if (item->layout()) {
+            clearLayout(item->layout());
+            delete item->layout();
+        }
+        if (item->widget()) {
+            delete item->widget();
+        }
+        delete item;
+    }
+}
