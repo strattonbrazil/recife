@@ -42,7 +42,7 @@ QImage convertMatToQImage(cv::Mat const& unformattedSrc)
      //return foo;
 }
 
-void clearLayout(QLayout *layout)
+void clearLayout(QLayout *layout, QSet<QWidget*> preserveWidgets)
 {
     QLayoutItem *item;
     while((item = layout->takeAt(0))) {
@@ -51,8 +51,40 @@ void clearLayout(QLayout *layout)
             delete item->layout();
         }
         if (item->widget()) {
-            delete item->widget();
+            QWidget* widget = item->widget();
+            if (!preserveWidgets.contains(widget))
+                delete widget;
         }
         delete item;
     }
+}
+
+QMetaProperty findProperty(QObject* obj, const char* name)
+{
+    const QMetaObject *metaobject = obj->metaObject();
+    int propertyCount = metaobject->propertyCount();
+    for (int i = 0; i < propertyCount; i++) {
+        QMetaProperty metaproperty = metaobject->property(i);
+        //const char *name = metaproperty.name();
+        if (strcmp(name, metaproperty.name()) == 0) // not a layer property
+            return metaproperty;
+    }
+}
+
+#include <QStringList>
+
+QPoint stringToPoint(QString s)
+{
+    QStringList tokens = s.replace("(","").replace(")","").replace(" ", "").split(",");
+    if (tokens.length() < 2)
+        return QPoint(0,0);
+    return QPoint(tokens[0].toInt(), tokens[1].toInt());
+}
+
+QPointF stringToPointF(QString s)
+{
+    QStringList tokens = s.replace("(","").replace(")","").replace(" ", "").split(",");
+    if (tokens.length() < 2)
+        return QPointF(0,0);
+    return QPointF(tokens[0].toFloat(), tokens[1].toFloat());
 }

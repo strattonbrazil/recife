@@ -2,6 +2,7 @@
 #define ATTRIBUTESPANE_H
 
 #include <QWidget>
+#include <QSet>
 #include "source.h"
 
 namespace Ui {
@@ -22,6 +23,7 @@ private:
     Ui::AttributesPane *ui;
     QSharedPointer<Source> _layer;
     QSharedPointer<Effect> _effect;
+    QSet<QWidget*> _preservedWidgets;
 };
 
 #endif // ATTRIBUTESPANE_H

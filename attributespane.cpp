@@ -21,9 +21,13 @@ void AttributesPane::setLayer(QSharedPointer<Source> layer)
     _layer = layer;
 
     QVBoxLayout* layerLayout = qobject_cast<QVBoxLayout*>(ui->layerAttrsFrame->layout());
-    clearLayout(layerLayout);
-    layerLayout->addWidget(_layer->editor());
-    //layerLayout->addStretch();
+    clearLayout(layerLayout, _preservedWidgets);
+
+    LayerEditor* editor = _layer->editor();
+    layerLayout->addWidget(editor);
+    _preservedWidgets.insert(editor);
+
+    editor->setLayer(_layer);
 
     ui->stackedWidget->setCurrentWidget(ui->attributesPage);
 }

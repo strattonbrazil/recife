@@ -98,7 +98,6 @@ void MainWindow::layerSelected(const QModelIndex & current, const QModelIndex & 
 
     if (connectEffectSelection) {
         connect(_effectsPane->effectsList()->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), this, SLOT(effectSelected(QModelIndex,QModelIndex)));
-        std::cout << "wiring effect selected" << std::endl;
     }
 
     _attributesPane->setLayer(layer);
