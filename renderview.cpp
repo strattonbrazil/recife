@@ -113,12 +113,18 @@ void RenderView::updateLayers(QModelIndex top, QModelIndex bottom)
         scene()->removeItem(item);
     }
 
-    for (int layer = top.row(); layer <= bottom.row(); layer++) {
-        Mat image = _model->composite(1, layer);
+    for (int layerIndex = top.row(); layerIndex <= bottom.row(); layerIndex++) {
+        QSharedPointer<Source> layer = _model->layer(layerIndex);
+        Mat image = _model->composite(1, layerIndex);
 
         QImage img = convertMatToQImage(image);
-        QPixmap pixmap = QPixmap::fromImage(img);
+        const float newWidth = img.width() * layer->scale().x();
+        const float newHeight = img.height() * layer->scale().y();
+        QImage scaledImage = img.scaled(newWidth,newHeight,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 
-        this->scene()->addPixmap(pixmap);
+        QPixmap pixmap = QPixmap::fromImage(scaledImage);
+
+        QGraphicsItem* item = this->scene()->addPixmap(pixmap);
+        item->setPos(layer->position());
     }
 }

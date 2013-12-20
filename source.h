@@ -33,10 +33,13 @@ public:
     QPointF position() { return _position; }
     QPointF scale() { return _scale; }
 
-    void setPosition(QPointF p) { std::cout << "setting position" << std::endl; _position = p; }
-    void setScale(QPointF s) { _scale = s; }
+    void setPosition(QPointF p) { _position = p; emitUpdate(); }
+    void setScale(QPointF s) { _scale = s; emitUpdate(); }
+signals:
+    void layerChanged(Source* layer);
 protected:
     EffectsModel* _effectsList;
+    void emitUpdate();
 private:
     QPointF _position;
     QPointF _scale;

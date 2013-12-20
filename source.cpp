@@ -110,6 +110,7 @@ QSharedPointer<Source> Source::getSource(QString fileName)
 
     foreach(FileHandler* handler, fileHandlers) {
         QSharedPointer<Source> src = handler->process(fileName);
+        src->_scale = QPointF(1,1);
         if (!src.isNull()) {
             src->_effectsList = new EffectsModel();
             return src;
@@ -199,5 +200,11 @@ void LayerEditor::updateTextProperty()
 
         std::cout << "it's a string" << std::endl;
     }
+
     //_layer->setProperty()
+}
+
+void Source::emitUpdate()
+{
+    emit(layerChanged(this));
 }

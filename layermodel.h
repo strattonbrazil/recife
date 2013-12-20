@@ -22,9 +22,9 @@ public:
     Mat composite(int frame, int layer);
     QSharedPointer<Source> layer(int layer);
     void updateLayer(QSharedPointer<Source> layer);
-signals:
 
 public slots:
+    void layerChanged(Source* layer);
 private:
     QVector<QSharedPointer<Source> > _sources;
     

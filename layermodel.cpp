@@ -22,6 +22,8 @@ void LayerModel::addSource(QSharedPointer<Source> source)
 {
     _sources.append(source);
 
+    connect(source.data(), SIGNAL(layerChanged(Source*)), this, SLOT(layerChanged(Source*)));
+
     QModelIndex topLeft = createIndex(0, 0);
     emit(dataChanged(topLeft, topLeft));
 }
@@ -37,6 +39,16 @@ QSharedPointer<Source> LayerModel::layer(int layer)
 }
 
 void LayerModel::updateLayer(QSharedPointer<Source> layer)
+{
+    // TODO: actually find the right model index instead of sending
+    // all of them
+    QModelIndex topLeft = createIndex(0, 0);
+    QModelIndex bottomLeft = createIndex(_sources.size()-1, 0);
+
+    emit(dataChanged(topLeft, bottomLeft));
+}
+
+void LayerModel::layerChanged(Source *layer)
 {
     // TODO: actually find the right model index instead of sending
     // all of them
