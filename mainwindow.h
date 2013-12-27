@@ -8,6 +8,7 @@
 #include "layerspane.h"
 #include "effectspane.h"
 #include "attributespane.h"
+#include "framebar.h"
 
 namespace Ui {
 class MainWindow;
@@ -29,6 +30,7 @@ public slots:
     void effectSelected(const QModelIndex & current, const QModelIndex & previous);
 
     void newColorKey();
+    void updateFrame(int frame);
 private:
     void setProjectActive(bool status);
     void rerender(QSharedPointer<Source> layer);
@@ -38,6 +40,7 @@ private:
     LayerModel* _layerModel;
     EffectsPane* _effectsPane;
     AttributesPane* _attributesPane;
+    FrameBar* _frameBar;
 };
 
 #endif // MAINWINDOW_H

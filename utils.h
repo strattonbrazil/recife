@@ -13,7 +13,8 @@ cv::Mat addAlphaChannel(cv::Mat const& src);
 void clearLayout(QLayout* layout, QSet<QWidget*> preserveWidgets=QSet<QWidget*>());
 QMetaProperty findProperty(QObject* obj, const char* name);
 
-// TODO: these are temporary functions that will be replaced later by a real interpreter
+QPointF evalPointF(QString s);
+
 QPoint stringToPoint(QString s);
 QPointF stringToPointF(QString s);
 

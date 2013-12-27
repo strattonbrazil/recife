@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui script
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -24,7 +24,9 @@ SOURCES += main.cpp\
     effectspane.cpp \
     effectsmodel.cpp \
     effect.cpp \
-    attributespane.cpp
+    attributespane.cpp \
+    validator.cpp \
+    framebar.cpp
 
 HEADERS  += mainwindow.h \
     layermodel.h \
@@ -36,10 +38,17 @@ HEADERS  += mainwindow.h \
     effectspane.h \
     effectsmodel.h \
     effect.h \
-    attributespane.h
+    attributespane.h \
+    validator.h \
+    framebar.h
 
 FORMS    += mainwindow.ui \
     compositorpane.ui \
     layerspane.ui \
     effectspane.ui \
     attributespane.ui
+
+#unix {
+#    CONFIG += link_pkgconfig
+#    PKGCONFIG += guile-2.0
+#}

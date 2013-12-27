@@ -9,10 +9,13 @@
 #include <QMetaObject>
 #include <QMetaProperty>
 #include <QHash>
-#include <QFormLayout>
+#include <QGridLayout>
 #include <QLineEdit>
+#include <QLabel>
+#include <QPushButton>
 
 #include "utils.h"
+#include "validator.h"
 
 ImageSource::ImageSource(QString fileName)
 {
@@ -40,7 +43,7 @@ LayerEditor* Source::editor()
 
     if (!classEditors.contains(className)) {
         LayerEditor* editor = new LayerEditor(0);
-        QFormLayout* layout = new QFormLayout();
+        QGridLayout* layout = new QGridLayout();
         editor->setLayout(layout);
 
         int propertyCount = metaobject->propertyCount();
@@ -56,12 +59,19 @@ LayerEditor* Source::editor()
 
             } else {
                 QLineEdit* w = new QLineEdit();
-                connect(w, SIGNAL(editingFinished()), editor, SLOT(updateTextProperty()));
+                w->setReadOnly(true);
+                //connect(w, SIGNAL(editingFinished()), editor, SLOT(updateTextProperty()));
                 widget = w;
             }
             editor->registerInput(name, widget);
             widget->setProperty("variable", name);
-            layout->addRow(name, widget);
+
+            layout->addWidget(new QLabel(name), i, 0);
+            layout->addWidget(widget, i, 1);
+
+            QPushButton* button = new QPushButton("K");
+            layout->addWidget(button, i, 2);
+            button->setMaximumWidth(30);
         }
 
         classEditors.insert(className, editor);
@@ -110,7 +120,8 @@ QSharedPointer<Source> Source::getSource(QString fileName)
 
     foreach(FileHandler* handler, fileHandlers) {
         QSharedPointer<Source> src = handler->process(fileName);
-        src->_scale = QPointF(1,1);
+        src->_position = "[0,0]";
+        src->_scale = "[1,1]";
         if (!src.isNull()) {
             src->_effectsList = new EffectsModel();
             return src;
@@ -166,9 +177,10 @@ void LayerEditor::setLayer(QSharedPointer<Source> layer)
                 QPointF p = layer->property(name).toPointF();
                 textInput->setText(QString("").sprintf("(%.2f,%.2f)", p.x(), p.y()));
             }
-            //QLineEdit* w = new QLineEdit();
-            //connect(w, SIGNAL(editingFinished()), editor, SLOT(updateTextProperty()));
-            //widget = w;
+            else if (type == QVariant::String) {
+                QString s = layer->property(name).toString();
+                textInput->setText(s);
+            }
         }
     }
 }
@@ -198,7 +210,10 @@ void LayerEditor::updateTextProperty()
     } else { // assume it's a string
         assert(type == QVariant::String && "LayerEditor received an unknown property type");
 
-        std::cout << "it's a string" << std::endl;
+        QString text = editor->text();
+        evalPointF(text);
+
+        _layer->setProperty(propertyName, editor->text());
     }
 
     //_layer->setProperty()
@@ -208,3 +223,16 @@ void Source::emitUpdate()
 {
     emit(layerChanged(this));
 }
+
+QPointF Source::evalPosition()
+{
+    return evalPointF(position());
+}
+
+QPointF Source::evalScale()
+{
+    return evalPointF(scale());
+}
+
+// properties are typed strings
+// can be bound to a curve, so not editable

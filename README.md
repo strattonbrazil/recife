@@ -3,12 +3,16 @@ recife
 
 simple compositor
 
+requirements to build
+======
+* Qt
+* OpenCV
+
 TODO
 ======
+* add js validation to inputs
 * rename 'source' references to 'layer'
-* add lisp evaluator
 * add resolution support
-* shift to fit viewport
 * add timeline
 * 
 

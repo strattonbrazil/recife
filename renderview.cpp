@@ -113,18 +113,20 @@ void RenderView::updateLayers(QModelIndex top, QModelIndex bottom)
         scene()->removeItem(item);
     }
 
+    QPointF viewportOffset(VIEWPORT_BORDER, VIEWPORT_BORDER);
     for (int layerIndex = top.row(); layerIndex <= bottom.row(); layerIndex++) {
         QSharedPointer<Source> layer = _model->layer(layerIndex);
         Mat image = _model->composite(1, layerIndex);
 
         QImage img = convertMatToQImage(image);
-        const float newWidth = img.width() * layer->scale().x();
-        const float newHeight = img.height() * layer->scale().y();
+        QPointF scale = layer->evalScale();
+        const float newWidth = img.width() * scale.x();
+        const float newHeight = img.height() * scale.y();
         QImage scaledImage = img.scaled(newWidth,newHeight,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 
         QPixmap pixmap = QPixmap::fromImage(scaledImage);
 
         QGraphicsItem* item = this->scene()->addPixmap(pixmap);
-        item->setPos(layer->position());
+        item->setPos(layer->evalPosition() + viewportOffset);
     }
 }

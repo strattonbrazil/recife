@@ -1,8 +1,13 @@
 #include "utils.h"
 
 #include <opencv2/ocl/ocl.hpp>
+#include <QStringList>
+#include <QScriptEngine>
+#include <exception>
+#include <stdexcept>
 
 #include <iostream>
+//#include <libguile.h>
 
 QImage convertMatToQImage(cv::Mat const& unformattedSrc)
 {
@@ -71,7 +76,39 @@ QMetaProperty findProperty(QObject* obj, const char* name)
     }
 }
 
-#include <QStringList>
+/*
+bool guileInitialized = false;
+void initGuile()
+{
+    if (!guileInitialized) {
+        scm_init_guile();
+        guileInitialized = true;
+    }
+}
+*/
+
+
+QPointF evalPointF(QString s)
+{
+    //initGuile();
+
+    QScriptEngine engine;
+    QString program = "function frame() { return 1; }\n\n" + s;
+
+    if (!engine.canEvaluate(program))
+        throw std::runtime_error("can't evaluate point");
+
+    QScriptValue value = engine.evaluate(program);
+
+    QStringList pair = value.toString().split(",");
+    std::cout << "pair: " << value.toString().toStdString() << std::endl;
+    if (pair.length() < 2)
+        throw std::runtime_error("invalid pointf string");
+
+    return QPointF(pair[0].toFloat(), pair[1].toFloat());
+}
+
+
 
 QPoint stringToPoint(QString s)
 {

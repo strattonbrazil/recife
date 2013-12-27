@@ -48,6 +48,11 @@ MainWindow::MainWindow(QWidget *parent) :
     attributeListDock->setTitleBarWidget(new QLabel("Attributes"));
     this->addDockWidget(Qt::RightDockWidgetArea, attributeListDock);
 
+    // add frame bar
+    _frameBar = new FrameBar();
+    ui->framesFrame->layout()->addWidget(_frameBar);
+    connect(_frameBar, SIGNAL(frameChanged(int)), this, SLOT(updateFrame(int)));
+
     // make a new tab
     CompositorPane* renderPane = new CompositorPane();
     renderPane->setModel(_layerModel);
@@ -101,6 +106,7 @@ void MainWindow::layerSelected(const QModelIndex & current, const QModelIndex & 
     }
 
     _attributesPane->setLayer(layer);
+    _frameBar->setLayer(layer);
 }
 
 void MainWindow::effectSelected(const QModelIndex & current, const QModelIndex & previous)
@@ -130,4 +136,8 @@ void MainWindow::newColorKey()
     //QModelIndex topLeft = createIndex(0, 0);
     //emit(dataChanged(topLeft, topLeft));
     //rerender(layer);
+}
+
+void MainWindow::updateFrame(int frame)
+{
 }

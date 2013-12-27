@@ -27,22 +27,25 @@ public:
     EffectsModel* effectsModel();
     void addEffect(QSharedPointer<Effect> effect);
 
-    Q_PROPERTY(QPointF position READ position WRITE setPosition)
-    Q_PROPERTY(QPointF scale READ scale WRITE setScale)
+    Q_PROPERTY(QString position READ position WRITE setPosition)
+    Q_PROPERTY(QString scale READ scale WRITE setScale)
 
-    QPointF position() { return _position; }
-    QPointF scale() { return _scale; }
+    QString position() { return _position; }
+    QString scale() { return _scale; }
 
-    void setPosition(QPointF p) { _position = p; emitUpdate(); }
-    void setScale(QPointF s) { _scale = s; emitUpdate(); }
+    QPointF evalPosition();
+    QPointF evalScale();
+
+    void setPosition(QString p) { _position = p; emitUpdate(); }
+    void setScale(QString s) { _scale = s; emitUpdate(); }
 signals:
     void layerChanged(Source* layer);
 protected:
     EffectsModel* _effectsList;
     void emitUpdate();
 private:
-    QPointF _position;
-    QPointF _scale;
+    QString _position;
+    QString _scale;
 };
 
 class ImageSource : public Source
