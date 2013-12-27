@@ -2,8 +2,8 @@
 #include "ui_attributespane.h"
 #include "utils.h"
 
-AttributesPane::AttributesPane(QWidget *parent) :
-    QWidget(parent),
+AttributesPane::AttributesPane(QWidget *parent, FrameContext* frameContext) :
+    QWidget(parent), _frameContext(frameContext),
     ui(new Ui::AttributesPane)
 {
     ui->setupUi(this);
@@ -23,7 +23,7 @@ void AttributesPane::setLayer(QSharedPointer<Source> layer)
     QVBoxLayout* layerLayout = qobject_cast<QVBoxLayout*>(ui->layerAttrsFrame->layout());
     clearLayout(layerLayout, _preservedWidgets);
 
-    LayerEditor* editor = _layer->editor();
+    LayerEditor* editor = _layer->editor(_frameContext);
     layerLayout->addWidget(editor);
     _preservedWidgets.insert(editor);
 

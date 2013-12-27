@@ -37,13 +37,13 @@ Mat ImageSource::renderBase(int frame)
 
 QHash<QString,LayerEditor*> classEditors;
 \
-LayerEditor* Source::editor()
+LayerEditor* Source::editor(FrameContext* frameContext)
 {
     const QMetaObject *metaobject = metaObject();
     QString className = metaobject->className();
 
     if (!classEditors.contains(className)) {
-        LayerEditor* editor = new LayerEditor(0);
+        LayerEditor* editor = new LayerEditor(0, frameContext);
         QGridLayout* layout = new QGridLayout();
         editor->setLayout(layout);
 
@@ -51,15 +51,13 @@ LayerEditor* Source::editor()
         int row = 0;
         for (i = _properties.begin(); i != _properties.end(); ++i) {
             QString name = i.key();
-            QVariant value = i.value();
-
-            QVariant::Type type =  value.type();
+            //QVariant value = i.value();
 
             QWidget* widget = 0;
 
             QLineEdit* w = new QLineEdit();
-            w->setReadOnly(true);
-            //connect(w, SIGNAL(editingFinished()), editor, SLOT(updateTextProperty()));
+            //w->setReadOnly(true);
+            connect(w, SIGNAL(editingFinished()), editor, SLOT(updateTextProperty()));
             widget = w;
 
             editor->registerInput(name, widget);
@@ -124,8 +122,6 @@ LayerEditor* Source::editor()
 
         classEditors.insert(className, editor);
     }
-
-    std::cout << "done creating widget" << std::endl;
 
     return classEditors[className];
 }
@@ -197,7 +193,7 @@ void Source::addEffect(QSharedPointer<Effect> effect)
     _effectsList->addEffect(effect);
 }
 
-LayerEditor::LayerEditor(QWidget *parent) : QWidget(parent)
+LayerEditor::LayerEditor(QWidget *parent, FrameContext* frameContext) : QWidget(parent), _frameContext(frameContext)
 {
 }
 
@@ -205,35 +201,30 @@ void LayerEditor::setLayer(QSharedPointer<Source> layer)
 {
     _layer = layer;
 
-    std::cout << "filling in layer info" << std::endl;
-
-
     // put current layer values in inputs
     QMap<QString, QVariant> properties = layer->properties();
     QMap<QString, QVariant>::iterator i;
     int row = 0;
 
+    const int currentFrame = _frameContext->currentFrame();
     for (i = properties.begin(); i != properties.end(); ++i) {
         QString name = i.key();
         QVariant value = i.value();
 
         int type = value.userType();
-        //std::cout << type << std::endl;
-
-        std::cout << name.toStdString() << std::endl;
-        //std::cout << "KeyablePoint: " << qMetaTypeId<KeyablePoint>() << std::endl;
-        //std::cout << "KeyablePointF: " << qMetaTypeId<KeyablePointF>() << std::endl;
 
         QWidget* input = _inputs[QString(name)];
         if (type == qMetaTypeId<KeyablePoint>()) {
             QLineEdit* textInput = qobject_cast<QLineEdit*>(input);
             KeyablePoint p = value.value<KeyablePoint>();
+
             //QVariant::convert( value.to
             //std::cout << "it's a point" << std::endl;
         } else if (type == qMetaTypeId<KeyablePointF>()) {
             QLineEdit* textInput = qobject_cast<QLineEdit*>(input);
-            KeyablePointF p = value.value<KeyablePointF>();
-            //std::cout << "it's a pointf" << std::endl;
+            KeyablePointF kp = value.value<KeyablePointF>();
+            QPointF p = kp.eval(currentFrame);
+            textInput->setText(QString("").sprintf("(%.2f,%.2f)", p.x(), p.y()));
         }
     }
     /*
@@ -269,8 +260,6 @@ void LayerEditor::setLayer(QSharedPointer<Source> layer)
         }
     }
     */
-
-    std::cout << "done filling in layer info" << std::endl;
 }
 
 void LayerEditor::registerInput(QString name, QWidget* widget)
@@ -282,9 +271,34 @@ void LayerEditor::registerInput(QString name, QWidget* widget)
 
 void LayerEditor::updateTextProperty()
 {
-    char propertyName[200];
     QLineEdit* editor = qobject_cast<QLineEdit*>(sender());
-    QString qpropertyName = editor->property("variable").toString();
+    QString propertyName = editor->property("variable").toString();
+
+    std::cout << "updated property: " << propertyName.toStdString() << std::endl;
+    QVariant property = _layer->properties()[propertyName];
+    int type = property.userType();
+
+    const int currentFrame = _frameContext->currentFrame();
+
+    if (type == qMetaTypeId<KeyablePoint>()) {
+
+    } else if (type == qMetaTypeId<KeyablePointF>()) {
+        QPointF newValue(9,9);
+        KeyablePointF kp = property.value<KeyablePointF>();
+        if (!kp.hasKeyFrames()) {
+            kp.setPointF(newValue);
+        } else if (kp.hasKeyFrameAt(currentFrame)) {
+            kp.setPointF(newValue, currentFrame);
+        }
+    }
+
+
+    // find text input
+    // update property
+    // go to
+    /*
+    char propertyName[200];
+
     strcpy(propertyName, qpropertyName.toStdString().c_str());
 
     QMetaProperty property = findProperty(_layer.data(), propertyName);
@@ -305,6 +319,7 @@ void LayerEditor::updateTextProperty()
     }
 
     //_layer->setProperty()
+    */
 }
 
 void Source::emitUpdate()

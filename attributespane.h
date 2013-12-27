@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QSet>
 #include "source.h"
+#include "framebar.h"
 
 namespace Ui {
 class AttributesPane;
@@ -14,7 +15,7 @@ class AttributesPane : public QWidget
     Q_OBJECT
     
 public:
-    explicit AttributesPane(QWidget *parent = 0);
+    explicit AttributesPane(QWidget *parent, FrameContext* frameContext);
     ~AttributesPane();
     
     void setLayer(QSharedPointer<Source> layer);
@@ -24,6 +25,7 @@ private:
     QSharedPointer<Source> _layer;
     QSharedPointer<Effect> _effect;
     QSet<QWidget*> _preservedWidgets;
+    FrameContext* _frameContext;
 };
 
 #endif // ATTRIBUTESPANE_H

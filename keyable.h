@@ -8,16 +8,25 @@
 
 class KeyablePoint
 {
-    QPointF _p;
-    QMap<int,KeyablePoint> _keys;
+public:
+    QPoint eval(int frame);
+private:
+    QPoint _p;
+    QMap<int,QPoint> _keys;
 };
 Q_DECLARE_METATYPE(KeyablePoint);
 
 
 class KeyablePointF
 {
+public:
+    bool hasKeyFrames();
+    bool hasKeyFrameAt(int frame);
+    void setPointF(QPointF p, int frame=0);
+    QPointF eval(int frame);
+private:
     QPointF _p;
-    QMap<int,KeyablePointF> _keys;
+    QMap<int,QPointF> _keys;
 };
 Q_DECLARE_METATYPE(KeyablePointF);
 

@@ -6,7 +6,7 @@
 #include <opencv2/core/core.hpp>
 
 #include "effectsmodel.h"
-#include <iostream>
+#include "frame.h"
 
 using namespace cv;
 
@@ -21,7 +21,7 @@ public:
     virtual QString label() = 0;
     virtual Mat renderBase(int frame) = 0;
     Mat render(int frame);
-    LayerEditor* editor();
+    LayerEditor* editor(FrameContext* frameContext);
 
     static QSharedPointer<Source> getSource(QString fileName);
     EffectsModel* effectsModel();
@@ -84,7 +84,7 @@ class LayerEditor : public QWidget
     Q_OBJECT
 
 public:
-    explicit LayerEditor(QWidget *parent = 0);
+    explicit LayerEditor(QWidget *parent, FrameContext* frameContext);
     void setLayer(QSharedPointer<Source> layer);
     void registerInput(QString name, QWidget* widget);
 public slots:
@@ -92,6 +92,7 @@ public slots:
 private:
     QSharedPointer<Source> _layer;
     QHash<QString,QWidget*> _inputs;
+    FrameContext* _frameContext;
 };
 
 

@@ -4,8 +4,8 @@
 
 #include "utils.h"
 
-FrameBar::FrameBar(QWidget *parent) :
-    QWidget(parent), _currentFrame(1)
+FrameBar::FrameBar(QWidget *parent, FrameContext* frameContext) :
+    QWidget(parent), _frameContext(frameContext)
 {
     setMinimumHeight(40);
 }
@@ -35,11 +35,11 @@ void FrameBar::paintEvent(QPaintEvent *event)
     }
 
 
-
+    const int currentFrame = _frameContext->currentFrame();
     painter.setPen(QColor(255,0,255));
     for (int i = 0; i < BORDER; i++)
-        painter.drawRect((_currentFrame-1)*FRAME_WIDTH+i, i, FRAME_WIDTH+BORDER+BORDER-1-i*2, height()-1-i*2);
-    painter.fillRect((_currentFrame-1)*FRAME_WIDTH+BORDER, BORDER, FRAME_WIDTH, FRAME_HEIGHT, QColor(255,0,255,60));
+        painter.drawRect((currentFrame-1)*FRAME_WIDTH+i, i, FRAME_WIDTH+BORDER+BORDER-1-i*2, height()-1-i*2);
+    painter.fillRect((currentFrame-1)*FRAME_WIDTH+BORDER, BORDER, FRAME_WIDTH, FRAME_HEIGHT, QColor(255,0,255,60));
 
     painter.end();
 }
@@ -53,11 +53,9 @@ void FrameBar::mouseReleaseEvent(QMouseEvent *event)
 {
     int frame = 1 + (event->pos().x()-_BORDER) / _FRAME_WIDTH;
 
-    if (frame != _currentFrame) {
-        //std::cout << "frame: " << frame << std::endl;
-        _currentFrame = frame;
+    if (frame != _frameContext->currentFrame()) {
+        _frameContext->setCurrentFrame(frame);
         update();
-        emit(frameChanged(_currentFrame));
     }
 
 }

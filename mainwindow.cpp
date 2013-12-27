@@ -41,17 +41,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionColorKeyEffect, SIGNAL(triggered(bool)), this, SLOT(newColorKey()));
 
+    FrameContext* frameContext = new FrameContext();
+    connect(frameContext, SIGNAL(frameChanged(int)), this, SLOT(updateFrame(int)));
+
     // add attributes pane
     QDockWidget* attributeListDock = new QDockWidget();
-    _attributesPane = new AttributesPane();
+    _attributesPane = new AttributesPane(0, frameContext);
     attributeListDock->setWidget(_attributesPane);
     attributeListDock->setTitleBarWidget(new QLabel("Attributes"));
     this->addDockWidget(Qt::RightDockWidgetArea, attributeListDock);
 
     // add frame bar
-    _frameBar = new FrameBar();
+    _frameBar = new FrameBar(0, frameContext);
     ui->framesFrame->layout()->addWidget(_frameBar);
-    connect(_frameBar, SIGNAL(frameChanged(int)), this, SLOT(updateFrame(int)));
 
     // make a new tab
     CompositorPane* renderPane = new CompositorPane();
