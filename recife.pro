@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     effect.cpp \
     attributespane.cpp \
     validator.cpp \
-    framebar.cpp
+    framebar.cpp \
+    keyable.cpp
 
 HEADERS  += mainwindow.h \
     layermodel.h \
@@ -40,7 +41,8 @@ HEADERS  += mainwindow.h \
     effect.h \
     attributespane.h \
     validator.h \
-    framebar.h
+    framebar.h \
+    keyable.h
 
 FORMS    += mainwindow.ui \
     compositorpane.ui \

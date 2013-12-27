@@ -16,6 +16,7 @@
 
 #include "utils.h"
 #include "validator.h"
+#include "keyable.h"
 
 ImageSource::ImageSource(QString fileName)
 {
@@ -46,6 +47,52 @@ LayerEditor* Source::editor()
         QGridLayout* layout = new QGridLayout();
         editor->setLayout(layout);
 
+        QMap<QString, QVariant>::iterator i;
+        int row = 0;
+        for (i = _properties.begin(); i != _properties.end(); ++i) {
+            QString name = i.key();
+            QVariant value = i.value();
+
+            QVariant::Type type =  value.type();
+
+            QWidget* widget = 0;
+
+            QLineEdit* w = new QLineEdit();
+            w->setReadOnly(true);
+            //connect(w, SIGNAL(editingFinished()), editor, SLOT(updateTextProperty()));
+            widget = w;
+
+            editor->registerInput(name, widget);
+            widget->setProperty("variable", name);
+
+            layout->addWidget(new QLabel(name), row, 0);
+            layout->addWidget(widget, row, 1);
+
+            QPushButton* button = new QPushButton("K");
+            layout->addWidget(button, row, 2);
+            button->setMaximumWidth(30);
+
+            /*
+            if (type == QVariant::nameToType("KeyablePoint")) {
+
+                std::cout << "it is a point" << std::endl;
+            }
+            else if (type == QVariant::nameToType("KeyablePointF")) {
+                std::cout << "it is a pointf" << std::endl;
+            }
+            std::cout << type << std::endl;
+            */
+            row++;
+        }
+        //QMapIterator<QString,QVariant> iter = _properties.iterator();
+        /*
+        int propertyCount = _properties.count();
+        for (int i = 0; i < propertyCount; i++) {
+
+            QVariant
+        }
+        */
+        /*
         int propertyCount = metaobject->propertyCount();
         for (int i = 0; i < propertyCount; i++) {
             QMetaProperty metaproperty = metaobject->property(i);
@@ -73,9 +120,12 @@ LayerEditor* Source::editor()
             layout->addWidget(button, i, 2);
             button->setMaximumWidth(30);
         }
+        */
 
         classEditors.insert(className, editor);
     }
+
+    std::cout << "done creating widget" << std::endl;
 
     return classEditors[className];
 }
@@ -122,6 +172,10 @@ QSharedPointer<Source> Source::getSource(QString fileName)
         QSharedPointer<Source> src = handler->process(fileName);
         src->_position = "[0,0]";
         src->_scale = "[1,1]";
+
+        src->_properties.insert(QString("position"), QVariant::fromValue(KeyablePointF()));
+        src->_properties.insert(QString("resolution"), QVariant::fromValue(KeyablePoint()));
+
         if (!src.isNull()) {
             src->_effectsList = new EffectsModel();
             return src;
@@ -151,7 +205,38 @@ void LayerEditor::setLayer(QSharedPointer<Source> layer)
 {
     _layer = layer;
 
+    std::cout << "filling in layer info" << std::endl;
+
+
     // put current layer values in inputs
+    QMap<QString, QVariant> properties = layer->properties();
+    QMap<QString, QVariant>::iterator i;
+    int row = 0;
+
+    for (i = properties.begin(); i != properties.end(); ++i) {
+        QString name = i.key();
+        QVariant value = i.value();
+
+        int type = value.userType();
+        //std::cout << type << std::endl;
+
+        std::cout << name.toStdString() << std::endl;
+        //std::cout << "KeyablePoint: " << qMetaTypeId<KeyablePoint>() << std::endl;
+        //std::cout << "KeyablePointF: " << qMetaTypeId<KeyablePointF>() << std::endl;
+
+        QWidget* input = _inputs[QString(name)];
+        if (type == qMetaTypeId<KeyablePoint>()) {
+            QLineEdit* textInput = qobject_cast<QLineEdit*>(input);
+            KeyablePoint p = value.value<KeyablePoint>();
+            //QVariant::convert( value.to
+            //std::cout << "it's a point" << std::endl;
+        } else if (type == qMetaTypeId<KeyablePointF>()) {
+            QLineEdit* textInput = qobject_cast<QLineEdit*>(input);
+            KeyablePointF p = value.value<KeyablePointF>();
+            //std::cout << "it's a pointf" << std::endl;
+        }
+    }
+    /*
     const QMetaObject *metaobject = layer->metaObject();
     QString className = metaobject->className();
 
@@ -183,6 +268,9 @@ void LayerEditor::setLayer(QSharedPointer<Source> layer)
             }
         }
     }
+    */
+
+    std::cout << "done filling in layer info" << std::endl;
 }
 
 void LayerEditor::registerInput(QString name, QWidget* widget)

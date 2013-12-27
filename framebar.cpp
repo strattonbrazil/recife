@@ -26,10 +26,12 @@ void FrameBar::paintEvent(QPaintEvent *event)
         int x = (frame-1)*FRAME_WIDTH+BORDER;
         painter.fillRect(x, BORDER, FRAME_WIDTH, FRAME_HEIGHT, colors[frame%2]);
 
+        /*
         if (_layer->hasKeyFrame(frame)) {
             const int ICON_WIDTH = FRAME_WIDTH - 2;
             painter.fillRect(x + 1, BORDER + 2, ICON_WIDTH, ICON_WIDTH, Qt::black);
         }
+        */
     }
 
 

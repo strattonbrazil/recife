@@ -27,6 +27,8 @@ public:
     EffectsModel* effectsModel();
     void addEffect(QSharedPointer<Effect> effect);
 
+    QMap<QString,QVariant> properties() { return _properties; }
+
     Q_PROPERTY(QString position READ position WRITE setPosition)
     Q_PROPERTY(QString scale READ scale WRITE setScale)
 
@@ -44,6 +46,8 @@ protected:
     EffectsModel* _effectsList;
     void emitUpdate();
 private:
+    QMap<QString,QVariant> _properties;
+
     QString _position;
     QString _scale;
 };
