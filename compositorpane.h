@@ -15,7 +15,7 @@ class CompositorPane : public QWidget
     Q_OBJECT
     
 public:
-    explicit CompositorPane(QWidget *parent = 0);
+    explicit CompositorPane(QWidget *parent, FrameContext* frameContext);
     ~CompositorPane();
     
     void setModel(LayerModel* model);

@@ -56,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->framesFrame->layout()->addWidget(_frameBar);
 
     // make a new tab
-    CompositorPane* renderPane = new CompositorPane();
+    CompositorPane* renderPane = new CompositorPane(0, frameContext);
     renderPane->setModel(_layerModel);
     QVBoxLayout* layout = new QVBoxLayout();
     ui->renderTabs->widget(0)->setLayout(layout);

@@ -10,11 +10,10 @@ requirements to build
 
 TODO
 ======
-* add js validation to inputs
-* rename 'source' references to 'layer'
-* add resolution support
-* new keyframes should evaluate properly
-* add ability to delete key frames
-* add rendering support
-* should be throwing error on unhandled QVariant user-types
-
+* feature - add js validation to inputs
+* clean up - rename 'source' references to 'layer'
+* feature - add resolution support
+* feature - add ability to delete key frames
+* feature - render to file
+* clean up - should be throwing error on unhandled QVariant user-types
+* feature - save session to disk

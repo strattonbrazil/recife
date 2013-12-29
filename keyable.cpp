@@ -8,6 +8,12 @@ QPoint KeyablePoint::eval(int frame)
         return _p;
 }
 
+KeyablePointF::KeyablePointF(float x, float y)
+{
+    _p.setX(x);
+    _p.setY(y);
+}
+
 bool KeyablePointF::hasKeyFrames()
 {
     return _keys.size() != 0;

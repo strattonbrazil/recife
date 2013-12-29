@@ -4,13 +4,13 @@
 #include <QMenu>
 #include <QMenuBar>
 
-CompositorPane::CompositorPane(QWidget *parent) :
+CompositorPane::CompositorPane(QWidget *parent, FrameContext* frameContext) :
     QWidget(parent),
     ui(new Ui::CompositorPane)
 {
     ui->setupUi(this);
 
-    _renderView = new RenderView();
+    _renderView = new RenderView(0, frameContext);
     ui->renderingFrame->layout()->addWidget(_renderView);
 
     ui->viewportCombo->addItem("1280x720");

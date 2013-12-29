@@ -20,6 +20,7 @@ Q_DECLARE_METATYPE(KeyablePoint);
 class KeyablePointF
 {
 public:
+    KeyablePointF(float x=0, float y=0);
     bool hasKeyFrames();
     bool hasKeyFrameAt(int frame);
     void setPointF(QPointF p, int frame=0);

@@ -18,6 +18,7 @@ class Source : public QObject
     Q_OBJECT
 
 public:
+    int id() { return _id; }
     virtual QString label() = 0;
     virtual Mat renderBase(int frame) = 0;
     Mat render(int frame);
@@ -33,6 +34,7 @@ public:
     bool hasKeyFrame(int frame);
     void setKeyFrame(QString propertyName, int frame);
 
+    /*
     Q_PROPERTY(QString position READ position WRITE setPosition)
     Q_PROPERTY(QString scale READ scale WRITE setScale)
 
@@ -44,6 +46,7 @@ public:
 
     void setPosition(QString p) { _position = p; emitUpdate(); }
     void setScale(QString s) { _scale = s; emitUpdate(); }
+    */
 signals:
     void layerChanged(Source* layer);
 protected:
@@ -52,8 +55,9 @@ protected:
 private:
     QMap<QString,QVariant> _properties;
 
-    QString _position;
-    QString _scale;
+    //QString _position;
+    //QString _scale;
+    int _id;
 };
 
 class ImageSource : public Source

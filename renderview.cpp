@@ -1,13 +1,15 @@
 #include "renderview.h"
 
+#include <iostream>
 #include <QPaintEvent>
 #include <QPainter>
 #include <QMenu>
 
 #include "utils.h"
+#include "keyable.h"
 
-RenderView::RenderView(QWidget *parent) :
-    QGraphicsView(parent), _model(0), _viewportOverlay(0)
+RenderView::RenderView(QWidget *parent, FrameContext* frameContext) :
+    QGraphicsView(parent), _model(0), _viewportOverlay(0), _frameContext(frameContext)
 {
     setScene(new QGraphicsScene());
     //this->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
@@ -16,6 +18,8 @@ RenderView::RenderView(QWidget *parent) :
 
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
+
+    connect(frameContext, SIGNAL(frameChanged(int)), this, SLOT(updateFrame(int)));
 }
 
 /*
@@ -104,22 +108,27 @@ void RenderView::showContextMenu(const QPoint &pos)
 
 void RenderView::updateLayers(QModelIndex top, QModelIndex bottom)
 {
-    // TODO: only clear changed layers
-    QList<QGraphicsItem*> toRemove;
-    foreach (QGraphicsItem* item, scene()->items()) {
-        toRemove.append(item);
+    // remove changed layers
+    for (int layerIndex = top.row(); layerIndex <= bottom.row(); layerIndex++) {
+        QSharedPointer<Source> layer = _model->layer(layerIndex);
+        if (_layerIdToItem.contains(layer->id())) {
+            QGraphicsItem* item = _layerIdToItem[layer->id()];
+            scene()->removeItem(item);
+            _layerIdToItem.remove(layer->id());
+        }
     }
-    foreach (QGraphicsItem* item, toRemove) {
-        scene()->removeItem(item);
-    }
+
+    const int currentFrame = _frameContext->currentFrame();
 
     QPointF viewportOffset(VIEWPORT_BORDER, VIEWPORT_BORDER);
     for (int layerIndex = top.row(); layerIndex <= bottom.row(); layerIndex++) {
         QSharedPointer<Source> layer = _model->layer(layerIndex);
         Mat image = _model->composite(1, layerIndex);
 
+        KeyablePointF position = layer->properties()["position"].value<KeyablePointF>();
+        QPointF scale = layer->properties()["scale"].value<KeyablePointF>().eval(currentFrame);
+
         QImage img = convertMatToQImage(image);
-        QPointF scale = layer->evalScale();
         const float newWidth = img.width() * scale.x();
         const float newHeight = img.height() * scale.y();
         QImage scaledImage = img.scaled(newWidth,newHeight,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
@@ -127,6 +136,21 @@ void RenderView::updateLayers(QModelIndex top, QModelIndex bottom)
         QPixmap pixmap = QPixmap::fromImage(scaledImage);
 
         QGraphicsItem* item = this->scene()->addPixmap(pixmap);
-        item->setPos(layer->evalPosition() + viewportOffset);
+        _layerIdToItem.insert(layer->id(), item);
+        item->setPos(position.eval(currentFrame) + viewportOffset);
     }
+}
+
+void RenderView::updateFrame(int frame)
+{
+    if (_model->rowCount() == 0)
+        return; // nothing to update
+
+    // TODO: this is slow, probably better ways to help this
+    //   * don't recreate layers that aren't changing
+    //   * only reposition layers that don't require recompositing
+    QModelIndex topLeft = _model->index(0);
+    QModelIndex bottomLeft = _model->index(_model->rowCount()-1);
+
+    updateLayers(topLeft, bottomLeft);
 }

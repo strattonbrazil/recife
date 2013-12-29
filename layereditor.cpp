@@ -1,5 +1,6 @@
 #include "layereditor.h"
 
+#include <iostream>
 #include <QLineEdit>
 #include <QPushButton>
 
@@ -80,14 +81,11 @@ void LayerEditor::registerInput(QString name, QWidget* widget)
     _inputs.insert(name, widget);
 }
 
-#include <iostream>
-
 void LayerEditor::updateTextProperty()
 {
     QLineEdit* editor = qobject_cast<QLineEdit*>(sender());
     QString propertyName = editor->property("variable").toString();
 
-    std::cout << "updated property: " << propertyName.toStdString() << " - " << editor->text().toStdString() << std::endl;
     QVariant property = _layer->properties()[propertyName];
     int type = property.userType();
 
@@ -107,35 +105,6 @@ void LayerEditor::updateTextProperty()
 
         _layer->setProperty(propertyName, QVariant::fromValue(kp));
     }
-
-
-    // find text input
-    // update property
-    // go to
-    /*
-    char propertyName[200];
-
-    strcpy(propertyName, qpropertyName.toStdString().c_str());
-
-    QMetaProperty property = findProperty(_layer.data(), propertyName);
-    QVariant::Type type = property.type();
-    if (type == QVariant::Point) {
-        QPoint p = stringToPoint(editor->text());
-        _layer->setProperty(propertyName, p);
-    } else if (type == QVariant::PointF) {
-        QPointF p = stringToPointF(editor->text());
-        _layer->setProperty(propertyName, p);
-    } else { // assume it's a string
-        assert(type == QVariant::String && "LayerEditor received an unknown property type");
-
-        QString text = editor->text();
-        evalPointF(text);
-
-        _layer->setProperty(propertyName, editor->text());
-    }
-
-    //_layer->setProperty()
-    */
 }
 
 void LayerEditor::setKeyFrame()

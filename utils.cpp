@@ -64,6 +64,7 @@ void clearLayout(QLayout *layout, QSet<QWidget*> preserveWidgets)
     }
 }
 
+/*
 QMetaProperty findProperty(QObject* obj, const char* name)
 {
     const QMetaObject *metaobject = obj->metaObject();
@@ -75,6 +76,7 @@ QMetaProperty findProperty(QObject* obj, const char* name)
             return metaproperty;
     }
 }
+*/
 
 float interpolate(float x, float x1, float y1, float x2, float y2)
 {
