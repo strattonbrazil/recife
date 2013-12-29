@@ -56,5 +56,7 @@ QPointF KeyablePointF::eval(int frame)
 
 void KeyablePointF::setKeyFrame(int frame)
 {
-    _keys[frame] = eval(frame);
+    QPointF f = eval(frame);
+
+    _keys.insert(frame, eval(frame));
 }

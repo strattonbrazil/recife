@@ -205,7 +205,7 @@ void Source::setKeyFrame(QString propertyName, int frame)
     } else if (type == qMetaTypeId<KeyablePointF>()) {
         KeyablePointF kp = _properties[propertyName].value<KeyablePointF>();
         kp.setKeyFrame(frame);
-        _properties[propertyName] = QVariant::fromValue(kp);
+        _properties.insert(propertyName, QVariant::fromValue(kp));
     }
 }
 

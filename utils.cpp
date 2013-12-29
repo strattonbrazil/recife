@@ -106,7 +106,6 @@ QPointF evalPointF(QString s)
     QScriptValue value = engine.evaluate(program);
 
     QStringList pair = value.toString().split(",");
-    std::cout << "pair: " << value.toString().toStdString() << std::endl;
     if (pair.length() < 2)
         throw std::runtime_error("invalid pointf string");
 
