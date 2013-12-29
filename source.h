@@ -27,7 +27,11 @@ public:
     EffectsModel* effectsModel();
     void addEffect(QSharedPointer<Effect> effect);
 
-    QMap<QString,QVariant> properties() { return _properties; }
+    void setProperty(QString propertyName, QVariant value);
+    QMap<QString,QVariant> properties();
+
+    bool hasKeyFrame(int frame);
+    void setKeyFrame(QString propertyName, int frame);
 
     Q_PROPERTY(QString position READ position WRITE setPosition)
     Q_PROPERTY(QString scale READ scale WRITE setScale)
@@ -71,29 +75,10 @@ private:
     QPoint _resolution;
 };
 
-
-
 class FileHandler
 {
 public:
     virtual QSharedPointer<Source> process(QString fileName) = 0;
 };
-
-class LayerEditor : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit LayerEditor(QWidget *parent, FrameContext* frameContext);
-    void setLayer(QSharedPointer<Source> layer);
-    void registerInput(QString name, QWidget* widget);
-public slots:
-    void updateTextProperty();
-private:
-    QSharedPointer<Source> _layer;
-    QHash<QString,QWidget*> _inputs;
-    FrameContext* _frameContext;
-};
-
 
 #endif // SOURCE_H

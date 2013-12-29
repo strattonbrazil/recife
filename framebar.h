@@ -15,7 +15,7 @@ public:
     void mouseReleaseEvent(QMouseEvent *event);
 
 public slots:
-    
+    void updateFrame(int f);
 private:
     QSharedPointer<Source> _layer;
     FrameContext* _frameContext;

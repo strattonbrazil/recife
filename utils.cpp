@@ -76,6 +76,11 @@ QMetaProperty findProperty(QObject* obj, const char* name)
     }
 }
 
+float interpolate(float x, float x1, float y1, float x2, float y2)
+{
+    return y1 + (y2-y1)*((x-x1)/(x2-x1));
+}
+
 /*
 bool guileInitialized = false;
 void initGuile()

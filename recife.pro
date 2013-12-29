@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     validator.cpp \
     framebar.cpp \
     keyable.cpp \
-    frame.cpp
+    frame.cpp \
+    layereditor.cpp
 
 HEADERS  += mainwindow.h \
     layermodel.h \
@@ -44,7 +45,8 @@ HEADERS  += mainwindow.h \
     validator.h \
     framebar.h \
     keyable.h \
-    frame.h
+    frame.h \
+    layereditor.h
 
 FORMS    += mainwindow.ui \
     compositorpane.ui \

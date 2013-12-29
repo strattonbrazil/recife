@@ -24,6 +24,7 @@ public:
     bool hasKeyFrameAt(int frame);
     void setPointF(QPointF p, int frame=0);
     QPointF eval(int frame);
+    void setKeyFrame(int frame);
 private:
     QPointF _p;
     QMap<int,QPointF> _keys;

@@ -14,3 +14,8 @@ void FrameContext::setCurrentFrame(int f)
     _currentFrame = f;
     emit(frameChanged(_currentFrame));
 }
+
+void FrameContext::updateFrame(int f)
+{
+    emit(frameChanged(_currentFrame));
+}

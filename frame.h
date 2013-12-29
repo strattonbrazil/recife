@@ -10,6 +10,7 @@ public:
     FrameContext(int frame=1);
     int currentFrame();
     void setCurrentFrame(int f);
+    void updateFrame(int f);
 signals:
     void frameChanged(int);
 private:

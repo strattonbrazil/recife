@@ -1,9 +1,10 @@
 #include "attributespane.h"
 #include "ui_attributespane.h"
 #include "utils.h"
+#include "layereditor.h"
 
 AttributesPane::AttributesPane(QWidget *parent, FrameContext* frameContext) :
-    QWidget(parent), _frameContext(frameContext),
+    QWidget(parent), _frameContext(frameContext), _currentEditor(0),
     ui(new Ui::AttributesPane)
 {
     ui->setupUi(this);
@@ -14,6 +15,12 @@ AttributesPane::AttributesPane(QWidget *parent, FrameContext* frameContext) :
 AttributesPane::~AttributesPane()
 {
     delete ui;
+}
+
+void AttributesPane::refresh()
+{
+    if (_currentEditor)
+        _currentEditor->setLayer(_layer);
 }
 
 void AttributesPane::setLayer(QSharedPointer<Source> layer)
@@ -28,6 +35,7 @@ void AttributesPane::setLayer(QSharedPointer<Source> layer)
     _preservedWidgets.insert(editor);
 
     editor->setLayer(_layer);
+    _currentEditor = editor;
 
     ui->stackedWidget->setCurrentWidget(ui->attributesPage);
 }

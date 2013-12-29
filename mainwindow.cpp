@@ -142,4 +142,7 @@ void MainWindow::newColorKey()
 
 void MainWindow::updateFrame(int frame)
 {
+    _attributesPane->refresh(); //Layer(_layersPane->selectedLayer());
+    //set
+    //std::cout << "need to change layer" << std::endl;
 }
