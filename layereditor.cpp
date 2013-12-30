@@ -3,6 +3,7 @@
 #include <iostream>
 #include <QLineEdit>
 #include <QPushButton>
+#include <stdexcept>
 
 #include "keyable.h"
 #include "utils.h"
@@ -25,21 +26,27 @@ void LayerEditor::setLayer(QSharedPointer<Source> layer)
         QString name = i.key();
         QVariant value = i.value();
 
+        QPushButton* keyFrameButton = 0;
+        if (_buttons.contains(name))
+            keyFrameButton = _buttons[name];
+
         int type = value.userType();
 
-        QWidget* input = _inputs[QString(name)];
-        if (type == qMetaTypeId<KeyablePoint>()) {
-            QLineEdit* textInput = qobject_cast<QLineEdit*>(input);
-            KeyablePoint p = value.value<KeyablePoint>();
-
-            //QVariant::convert( value.to
-            //std::cout << "it's a point" << std::endl;
-        } else if (type == qMetaTypeId<KeyablePointF>()) {
+        QWidget* input = _inputs[name];
+        if (type == qMetaTypeId<KeyablePointF>()) {
             QLineEdit* textInput = qobject_cast<QLineEdit*>(input);
             KeyablePointF kp = value.value<KeyablePointF>();
             QPointF p = kp.eval(currentFrame);
             textInput->setText(QString("").sprintf("(%.2f,%.2f)", p.x(), p.y()));
+
+            if (keyFrameButton)
+                setButtonKeyFrame(keyFrameButton, !kp.hasKeyFrameAt(currentFrame));
+        } else {
+            throw std::runtime_error("setLayer: unsupported property type");
         }
+
+        // update keyframe buttons
+
     }
     /*
     const QMetaObject *metaobject = layer->metaObject();
@@ -81,6 +88,11 @@ void LayerEditor::registerInput(QString name, QWidget* widget)
     _inputs.insert(name, widget);
 }
 
+void LayerEditor::registerButton(QString name, QPushButton* button)
+{
+    _buttons.insert(name, button);
+}
+
 void LayerEditor::updateTextProperty()
 {
     QLineEdit* editor = qobject_cast<QLineEdit*>(sender());
@@ -112,7 +124,19 @@ void LayerEditor::setKeyFrame()
     QPushButton* button = qobject_cast<QPushButton*>(sender());
     QString propertyName = button->property("variable").toString();
 
+    // if it has a keyframe remove it
+    //button->setProperty()
+    //button->icon().
+
     const int frame = _frameContext->currentFrame();
-    _layer->setKeyFrame(propertyName, frame);
-    _frameContext->updateFrame(frame);
+    if (button->property("add_keyframe").toBool()) {
+        _layer->setKeyFrame(propertyName, frame);
+        _frameContext->updateFrame(frame);
+        setButtonKeyFrame(button, false);
+
+    } else {
+        _layer->removeKeyFrame(propertyName, frame);
+        _frameContext->updateFrame(frame);
+        setButtonKeyFrame(button, true);
+    }
 }

@@ -68,8 +68,10 @@ LayerEditor* Source::editor(FrameContext* frameContext)
             layout->addWidget(new QLabel(name), row, 0);
             layout->addWidget(widget, row, 1);
 
-            QPushButton* button = new QPushButton("K");
+            QPushButton* button = new QPushButton();
+            editor->registerButton(name, button);
             button->setProperty("variable", name);
+            setButtonKeyFrame(button, true);
             connect(button, SIGNAL(clicked()), editor, SLOT(setKeyFrame()));
             layout->addWidget(button, row, 2);
             button->setMaximumWidth(30);
@@ -156,12 +158,25 @@ void Source::setKeyFrame(QString propertyName, int frame)
 {
     int type = _properties[propertyName].userType();
 
-    if (type == qMetaTypeId<KeyablePoint>()) {
-
-    } else if (type == qMetaTypeId<KeyablePointF>()) {
+    if (type == qMetaTypeId<KeyablePointF>()) {
         KeyablePointF kp = _properties[propertyName].value<KeyablePointF>();
         kp.setKeyFrame(frame);
         _properties.insert(propertyName, QVariant::fromValue(kp));
+    } else {
+        throw std::runtime_error("setKeyFrame: unsupported property type");
+    }
+}
+
+void Source::removeKeyFrame(QString propertyName, int frame)
+{
+    int type = _properties[propertyName].userType();
+
+    if (type == qMetaTypeId<KeyablePointF>()) {
+        KeyablePointF kp = _properties[propertyName].value<KeyablePointF>();
+        kp.removeKeyFrame(frame);
+        _properties.insert(propertyName, QVariant::fromValue(kp));
+    } else {
+        throw std::runtime_error("removeKeyFrame: unsupported property type");
     }
 }
 

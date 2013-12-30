@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>keyframe.png</file>
+        <file>rm_keyframe.png</file>
+    </qresource>
+</RCC>

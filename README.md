@@ -14,6 +14,6 @@ TODO
 * clean up - rename 'source' references to 'layer'
 * feature - add resolution support
 * feature - add ability to delete key frames
-* feature - render to file
+* feature - render to video/image file
 * clean up - should be throwing error on unhandled QVariant user-types
 * feature - save session to disk

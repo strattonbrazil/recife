@@ -131,3 +131,16 @@ QPointF stringToPointF(QString s)
         return QPointF(0,0);
     return QPointF(tokens[0].toFloat(), tokens[1].toFloat());
 }
+
+void setButtonKeyFrame(QPushButton *button, bool add)
+{
+    if (add) { // set the button to create key frames
+        button->setIcon(QIcon(":icons/keyframe.png"));
+        button->setToolTip("Set keyframe");
+        button->setProperty("add_keyframe", true);
+    } else { // set the button to remove key frames
+        button->setIcon(QIcon(":icons/rm_keyframe.png"));
+        button->setToolTip("Remove keyframe");
+        button->setProperty("add_keyframe", false);
+    }
+}

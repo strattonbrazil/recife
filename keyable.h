@@ -26,6 +26,7 @@ public:
     void setPointF(QPointF p, int frame=0);
     QPointF eval(int frame);
     void setKeyFrame(int frame);
+    void removeKeyFrame(int frame);
 private:
     QPointF _p;
     QMap<int,QPointF> _keys;

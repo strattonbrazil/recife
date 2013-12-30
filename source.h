@@ -33,20 +33,7 @@ public:
 
     bool hasKeyFrame(int frame);
     void setKeyFrame(QString propertyName, int frame);
-
-    /*
-    Q_PROPERTY(QString position READ position WRITE setPosition)
-    Q_PROPERTY(QString scale READ scale WRITE setScale)
-
-    QString position() { return _position; }
-    QString scale() { return _scale; }
-
-    QPointF evalPosition();
-    QPointF evalScale();
-
-    void setPosition(QString p) { _position = p; emitUpdate(); }
-    void setScale(QString s) { _scale = s; emitUpdate(); }
-    */
+    void removeKeyFrame(QString propertyName, int frame);
 signals:
     void layerChanged(Source* layer);
 protected:

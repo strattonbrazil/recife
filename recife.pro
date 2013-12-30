@@ -58,3 +58,6 @@ FORMS    += mainwindow.ui \
 #    CONFIG += link_pkgconfig
 #    PKGCONFIG += guile-2.0
 #}
+
+RESOURCES += \
+    images/icons.qrc

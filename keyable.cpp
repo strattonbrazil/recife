@@ -66,3 +66,8 @@ void KeyablePointF::setKeyFrame(int frame)
 
     _keys.insert(frame, eval(frame));
 }
+
+void KeyablePointF::removeKeyFrame(int frame)
+{
+    _keys.remove(frame);
+}

@@ -6,6 +6,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <QMetaProperty>
+#include <QPushButton>
 #include <QSet>
 
 QImage convertMatToQImage(cv::Mat const& src);
@@ -19,5 +20,7 @@ QPointF evalPointF(QString s);
 
 QPoint stringToPoint(QString s);
 QPointF stringToPointF(QString s);
+
+void setButtonKeyFrame(QPushButton* button, bool add);
 
 #endif // UTILS_H
