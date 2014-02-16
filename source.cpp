@@ -1,5 +1,6 @@
 #include "source.h"
 
+#include <iostream>
 #include <QStringList>
 #include <QVector>
 #include <stdexcept>
@@ -19,22 +20,14 @@
 #include "keyable.h"
 #include "layereditor.h"
 
-ImageSource::ImageSource(QString fileName)
+class FileHandler
 {
-    // TODO: use a namebase utility function here
-    _label = fileName.split("/").last();
-    _imagePath = fileName;
-}
-
-QString ImageSource::label()
-{
-    return _label;
-}
-
-Mat ImageSource::renderBase(int frame)
-{
-    return cv::imread(_imagePath.toStdString(), CV_LOAD_IMAGE_UNCHANGED);
-}
+public:
+    QStringList supportedExtensions() { return _supportedExtensions; }
+    virtual QSharedPointer<Source> process(QString fileName) = 0;
+protected:
+    QStringList _supportedExtensions;
+};
 
 QHash<QString,LayerEditor*> classEditors;
 
@@ -86,16 +79,30 @@ LayerEditor* Source::editor(FrameContext* frameContext)
 
 class ImageHandler : public FileHandler
 {
+public:
+    ImageHandler()
+    {
+        _supportedExtensions.append("jpg");
+        _supportedExtensions.append("png");
+    }
+
     QSharedPointer<Source> process(QString fileName)
     {
-        if (fileName.endsWith(".jpg")) {
-            return QSharedPointer<Source>(new ImageSource(fileName));
-        }
-        else if (fileName.endsWith(".png")) {
-            return QSharedPointer<Source>(new ImageSource(fileName));
-        }
+        return QSharedPointer<Source>(new ImageSource(fileName));
+    }
+};
 
-        return QSharedPointer<Source>(0);
+class VideoHandler : public FileHandler
+{
+public:
+    VideoHandler()
+    {
+        _supportedExtensions.append("mov");
+    }
+
+    QSharedPointer<Source> process(QString fileName)
+    {
+        return QSharedPointer<Source>(new VideoSource(fileName));
     }
 };
 
@@ -104,9 +111,8 @@ QVector<FileHandler*> fileHandlers;
 void validate()
 {
     if (fileHandlers.size() == 0) {
-        ImageHandler* imageHandler = new ImageHandler();
-
-        fileHandlers.append(imageHandler);
+        fileHandlers.append(new ImageHandler());
+        fileHandlers.append(new VideoHandler());
     }
 }
 
@@ -118,22 +124,39 @@ Mat Source::render(int frame)
     return processed;
 }
 
+QStringList Source::supportedExtensions()
+{
+    validate();
+
+    QStringList extensions;
+    foreach(FileHandler* handler, fileHandlers) {
+        std::cout << "looking at handler..." << std::endl;
+        foreach(QString extension, handler->supportedExtensions()) {
+            std::cout << "ext: " << extension.toStdString() << std::endl;
+            extensions.append(extension);
+        }
+    }
+
+    //extensions.removeDuplicates();
+
+    return extensions;
+}
+
 int idCount = 1;
 QSharedPointer<Source> Source::getSource(QString fileName)
 {
     validate();
 
+    QFileInfo fileInfo(fileName);
+
     foreach(FileHandler* handler, fileHandlers) {
-        QSharedPointer<Source> src = handler->process(fileName);
-        //src->_position = "[0,0]";
-        //src->_scale = "[1,1]";
-        src->_id = idCount++;
+        if (handler->supportedExtensions().contains(fileInfo.suffix())) {
+            QSharedPointer<Source> src = handler->process(fileName);
+            src->_id = idCount++;
 
-        src->_properties.insert(QString("position"), QVariant::fromValue(KeyablePointF()));
-        src->_properties.insert(QString("scale"), QVariant::fromValue(KeyablePointF(1,1)));
-        //src->_properties.insert(QString("resolution"), QVariant::fromValue(KeyablePoint()));
+            src->_properties.insert(QString("position"), QVariant::fromValue(KeyablePointF()));
+            src->_properties.insert(QString("scale"), QVariant::fromValue(KeyablePointF(1,1)));
 
-        if (!src.isNull()) {
             src->_effectsList = new EffectsModel();
             return src;
         }
@@ -210,4 +233,43 @@ bool Source::hasKeyFrame(int frame)
 void Source::emitUpdate()
 {
     emit(layerChanged(this));
+}
+
+ImageSource::ImageSource(QString fileName)
+{
+    // TODO: use a namebase utility function here
+    _label = fileName.split("/").last();
+    _imagePath = fileName;
+}
+
+Mat ImageSource::renderBase(int frame)
+{
+    return cv::imread(_imagePath.toStdString(), CV_LOAD_IMAGE_UNCHANGED);
+}
+
+VideoSource::VideoSource(QString fileName)
+{
+    _label = fileName.split("/").last();
+    _videoPath = fileName;
+}
+
+Mat VideoSource::renderBase(int frame)
+{
+    /*
+    QSharedPointer<CvCapture> video(cvCaptureFromFile(_videoPath.toStdString()));
+    IplImage* img = 0;
+    if (!cvGrabFrame(video.data())) {
+        std::err << "couldn't get frame" << std::endl;
+        return;
+    }
+
+    img =
+      */
+    VideoCapture capture(_videoPath.toStdString());
+
+    Mat f;
+    for (int i = 0; i < frame; i++) {
+        capture >> f;
+    }
+    return f;
 }

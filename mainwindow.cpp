@@ -5,6 +5,7 @@
 #include <QListView>
 #include <QFileDialog>
 #include <QLabel>
+#include <iostream>
 
 #include "compositorpane.h"
 #include "effectspane.h"
@@ -70,7 +71,15 @@ MainWindow::~MainWindow()
 
 void MainWindow::importFile()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Choose file to import", QDir::homePath(), "*.mpg *.jpg *.png");
+    QStringList extensions = Source::supportedExtensions();
+    QStringList extensionsWildCarded;
+    foreach (QString extension, extensions) {
+        extensionsWildCarded.append("*." + extension);
+    }
+
+    QString extensionFilter = extensionsWildCarded.join(" ");
+    std::cout << "extension filter: " << extensionFilter.toStdString() << std::endl;
+    QString fileName = QFileDialog::getOpenFileName(this, "Choose file to import", QDir::homePath(), extensionFilter);
     if (fileName == "")
         return;
 
@@ -90,9 +99,6 @@ void MainWindow::quit()
 void MainWindow::setProjectActive(bool status)
 {
 }
-
-#include <iostream>
-
 
 void MainWindow::layerSelected(const QModelIndex & current, const QModelIndex & previous)
 {
@@ -117,8 +123,6 @@ void MainWindow::effectSelected(const QModelIndex & current, const QModelIndex &
     QSharedPointer<Effect> effect = layer->effectsModel()->effect(current.row()); // _effectsPane->selectedEffect();
 
     _attributesPane->setEffect(effect);
-
-    std::cout << "selected effect" << std::endl;
 }
 
 /*

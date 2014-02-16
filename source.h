@@ -10,7 +10,7 @@
 
 using namespace cv;
 
-class FileHandler;
+//class FileHandler;
 class LayerEditor;
 
 class Source : public QObject
@@ -19,11 +19,12 @@ class Source : public QObject
 
 public:
     int id() { return _id; }
-    virtual QString label() = 0;
+    QString label() { return _label; }
     virtual Mat renderBase(int frame) = 0;
     Mat render(int frame);
     LayerEditor* editor(FrameContext* frameContext);
 
+    static QStringList supportedExtensions();
     static QSharedPointer<Source> getSource(QString fileName);
     EffectsModel* effectsModel();
     void addEffect(QSharedPointer<Effect> effect);
@@ -39,11 +40,11 @@ signals:
 protected:
     EffectsModel* _effectsList;
     void emitUpdate();
+
+    QString _label;
 private:
     QMap<QString,QVariant> _properties;
 
-    //QString _position;
-    //QString _scale;
     int _id;
 };
 
@@ -53,23 +54,23 @@ class ImageSource : public Source
 
 public:
     ImageSource(QString fileName);
-    QString label();
     Mat renderBase(int frame);
-
-    Q_PROPERTY(QPoint resolution READ resolution WRITE setResolution)
-
-    QPoint resolution() { return _resolution; }
-    void setResolution(QPoint r) { _resolution = r; }
 private:
-    QString _label;
     QString _imagePath;
     QPoint _resolution;
 };
 
-class FileHandler
+class VideoSource : public Source
 {
+    Q_OBJECT
+
 public:
-    virtual QSharedPointer<Source> process(QString fileName) = 0;
+    VideoSource(QString fileName);
+    Mat renderBase(int frame);
+private:
+    QString _videoPath;
 };
+
+
 
 #endif // SOURCE_H
