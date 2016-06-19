@@ -5,6 +5,7 @@
 #include <QListView>
 #include <QFileDialog>
 #include <QLabel>
+#include <QSettings>
 #include <iostream>
 
 #include "compositorpane.h"
@@ -15,6 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    updateRecentImports();
 
     // add layer list
     QDockWidget* layerListDock = new QDockWidget();
@@ -69,19 +72,35 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::importFile()
+void MainWindow::importFile(QString fileName)
 {
-    QStringList extensions = Source::supportedExtensions();
-    QStringList extensionsWildCarded;
-    foreach (QString extension, extensions) {
-        extensionsWildCarded.append("*." + extension);
+    // pop open a dialog
+    if (fileName == "") {
+        QStringList extensions = Source::supportedExtensions();
+        QStringList extensionsWildCarded;
+        foreach (QString extension, extensions) {
+            extensionsWildCarded.append("*." + extension);
+        }
+
+        QString extensionFilter = extensionsWildCarded.join(" ");
+        std::cout << "extension filter: " << extensionFilter.toStdString() << std::endl;
+        fileName = QFileDialog::getOpenFileName(this, "Choose file to import", QDir::homePath(), extensionFilter);
+        if (fileName == "")
+            return;
     }
 
-    QString extensionFilter = extensionsWildCarded.join(" ");
-    std::cout << "extension filter: " << extensionFilter.toStdString() << std::endl;
-    QString fileName = QFileDialog::getOpenFileName(this, "Choose file to import", QDir::homePath(), extensionFilter);
-    if (fileName == "")
-        return;
+    QSettings settings("recife");
+    QVariant recentImports = settings.value("recent_imports");
+    if (recentImports.isNull()) {
+        settings.setValue("recent_imports", fileName);
+    } else {
+        QStringList recentFileNames = recentImports.toString().split("|");
+        if (!recentFileNames.contains(fileName)) {
+            // TODO: cap number of recent items
+            settings.setValue("recent_imports", fileName + "|" + recentImports.toString());
+        }
+    }
+    updateRecentImports();
 
     _layerModel->addSource(Source::getSource(fileName));
 }
@@ -149,4 +168,35 @@ void MainWindow::updateFrame(int frame)
     _attributesPane->refresh(); //Layer(_layersPane->selectedLayer());
     //set
     //std::cout << "need to change layer" << std::endl;
+}
+
+void MainWindow::updateRecentImports()
+{
+    // TODO: remove from setting if file not found?
+
+    QSettings settings("recife");
+    QVariant recentImports = settings.value("recent_imports");
+    if (recentImports.isValid()) {
+        std::cout << "recent imports: " + recentImports.toString().toStdString() << std::endl;
+        QStringList recentFiles = recentImports.toString().split("|");
+
+        ui->actionNoRecentImports->setVisible(recentFiles.count() == 0);
+
+        // remove all actions except the default one
+        foreach (QObject* action, ui->menuRecentImports->children()) {
+            if (action != ui->actionNoRecentImports)
+                ui->menuRecentImports->removeAction((QAction*)action);
+        }
+
+        // add back recent imports
+        for (int i = 0; i < recentFiles.count(); i++) {
+            ui->menuRecentImports->addAction(recentFiles.at(i), this, SLOT(importRecentFile()));
+        }
+    }
+}
+
+void MainWindow::importRecentFile()
+{
+    QAction* action = (QAction*)sender();
+    importFile(action->text());
 }

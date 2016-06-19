@@ -70,16 +70,23 @@
      <x>0</x>
      <y>0</y>
      <width>1154</width>
-     <height>25</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuRecentImports">
+     <property name="title">
+      <string>Recent Imports</string>
+     </property>
+     <addaction name="actionNoRecentImports"/>
+    </widget>
     <addaction name="actionNewProject"/>
     <addaction name="separator"/>
     <addaction name="actionImport"/>
+    <addaction name="menuRecentImports"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -134,6 +141,17 @@
    </property>
    <property name="text">
     <string>Color Key</string>
+   </property>
+  </action>
+  <action name="actionNoRecentImports">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>(no recent imports)</string>
    </property>
   </action>
  </widget>

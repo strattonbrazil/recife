@@ -23,7 +23,8 @@ public:
     ~MainWindow();
 public slots:
     void newProject();
-    void importFile();
+    void importFile(QString fileName = "");
+    void importRecentFile();
     void quit();
 
     void layerSelected(const QModelIndex & current, const QModelIndex & previous);
@@ -34,6 +35,7 @@ public slots:
 private:
     void setProjectActive(bool status);
     void rerender(QSharedPointer<Source> layer);
+    void updateRecentImports();
 
     Ui::MainWindow *ui;
     LayersPane* _layersPane;

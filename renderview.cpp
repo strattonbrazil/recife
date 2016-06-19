@@ -123,7 +123,7 @@ void RenderView::updateLayers(QModelIndex top, QModelIndex bottom)
     QPointF viewportOffset(VIEWPORT_BORDER, VIEWPORT_BORDER);
     for (int layerIndex = top.row(); layerIndex <= bottom.row(); layerIndex++) {
         QSharedPointer<Source> layer = _model->layer(layerIndex);
-        Mat image = _model->composite(1, layerIndex);
+        Mat image = _model->composite(200, layerIndex);
 
         KeyablePointF position = layer->properties()["position"].value<KeyablePointF>();
         QPointF scale = layer->properties()["scale"].value<KeyablePointF>().eval(currentFrame);
