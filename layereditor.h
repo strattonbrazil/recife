@@ -10,7 +10,7 @@ class LayerEditor : public QWidget
     Q_OBJECT
 
 public:
-    explicit LayerEditor(QWidget *parent, FrameContext* frameContext);
+    explicit LayerEditor(QWidget *parent, TimeContext* frameContext);
     void setLayer(QSharedPointer<Source> layer);
     void registerInput(QString name, QWidget* widget);
     void registerButton(QString name, QPushButton* button);
@@ -21,7 +21,7 @@ private:
     QSharedPointer<Source> _layer;
     QHash<QString,QWidget*> _inputs;
     QHash<QString,QPushButton*> _buttons;
-    FrameContext* _frameContext;
+    TimeContext* _frameContext;
 };
 
 #endif // LAYEREDITOR_H

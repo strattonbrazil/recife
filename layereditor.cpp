@@ -8,7 +8,7 @@
 #include "keyable.h"
 #include "utils.h"
 
-LayerEditor::LayerEditor(QWidget *parent, FrameContext* frameContext) : QWidget(parent), _frameContext(frameContext)
+LayerEditor::LayerEditor(QWidget *parent, TimeContext* frameContext) : QWidget(parent), _frameContext(frameContext)
 {
 }
 

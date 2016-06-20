@@ -3,18 +3,20 @@
 
 #include <QObject>
 
-class FrameContext : public QObject
+class TimeContext : public QObject
 {
     Q_OBJECT
 public:
-    FrameContext(int frame=1);
+    TimeContext(int frame=1);
     int currentFrame();
+    float duration();
     void setCurrentFrame(int f);
     void updateFrame(int f);
 signals:
     void frameChanged(int);
 private:
     int _currentFrame;
+    float _duration = 60*60*2; // 2 hours in seconds
 };
 
 #endif // FRAME_H

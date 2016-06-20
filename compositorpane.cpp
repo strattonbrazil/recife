@@ -4,7 +4,7 @@
 #include <QMenu>
 #include <QMenuBar>
 
-CompositorPane::CompositorPane(QWidget *parent, FrameContext* frameContext) :
+CompositorPane::CompositorPane(QWidget *parent, TimeContext* frameContext) :
     QWidget(parent),
     ui(new Ui::CompositorPane)
 {

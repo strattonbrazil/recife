@@ -1,21 +1,26 @@
 #include "frame.h"
 
-FrameContext::FrameContext(int frame) : _currentFrame(frame)
+TimeContext::TimeContext(int frame) : _currentFrame(frame)
 {
 }
 
-int FrameContext::currentFrame()
+int TimeContext::currentFrame()
 {
     return _currentFrame;
 }
 
-void FrameContext::setCurrentFrame(int f)
+float TimeContext::duration()
+{
+    return _duration;
+}
+
+void TimeContext::setCurrentFrame(int f)
 {
     _currentFrame = f;
     emit(frameChanged(_currentFrame));
 }
 
-void FrameContext::updateFrame(int f)
+void TimeContext::updateFrame(int f)
 {
     emit(frameChanged(_currentFrame));
 }

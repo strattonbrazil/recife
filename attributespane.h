@@ -15,7 +15,7 @@ class AttributesPane : public QWidget
     Q_OBJECT
     
 public:
-    explicit AttributesPane(QWidget *parent, FrameContext* frameContext);
+    explicit AttributesPane(QWidget *parent, TimeContext* frameContext);
     ~AttributesPane();
     
     void refresh();
@@ -27,7 +27,7 @@ private:
     QSharedPointer<Effect> _effect;
     LayerEditor* _currentEditor;
     QSet<QWidget*> _preservedWidgets;
-    FrameContext* _frameContext;
+    TimeContext* _frameContext;
 };
 
 #endif // ATTRIBUTESPANE_H

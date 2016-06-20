@@ -3,7 +3,7 @@
 #include "utils.h"
 #include "layereditor.h"
 
-AttributesPane::AttributesPane(QWidget *parent, FrameContext* frameContext) :
+AttributesPane::AttributesPane(QWidget *parent, TimeContext* frameContext) :
     QWidget(parent), _frameContext(frameContext), _currentEditor(0),
     ui(new Ui::AttributesPane)
 {

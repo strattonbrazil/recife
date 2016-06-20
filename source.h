@@ -22,7 +22,7 @@ public:
     QString label() { return _label; }
     virtual Mat renderBase(int frame) = 0;
     Mat render(int frame);
-    LayerEditor* editor(FrameContext* frameContext);
+    LayerEditor* editor(TimeContext* frameContext);
 
     static QStringList supportedExtensions();
     static QSharedPointer<Source> getSource(QString fileName);

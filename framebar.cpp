@@ -4,43 +4,51 @@
 
 #include "utils.h"
 
-FrameBar::FrameBar(QWidget *parent, FrameContext* frameContext) :
-    QWidget(parent), _frameContext(frameContext)
+#define UPPER_HEIGHT 12
+#define LOWER_HEIGHT 48
+
+enum
 {
-    setMinimumHeight(40);
-    connect(_frameContext, SIGNAL(frameChanged(int)), this, SLOT(updateFrame(int)));
+    NO_DRAG,
+    DRAG_LEFT,
+    DRAG_RIGHT
+};
+
+FrameBar::FrameBar(QWidget *parent, TimeContext* timeContext) :
+    QWidget(parent), _timeContext(timeContext)
+{
+    setMouseTracking(true);
+    setMinimumHeight(UPPER_HEIGHT + LOWER_HEIGHT);
+    _draggingState = NO_DRAG;
+
+    connect(_timeContext, SIGNAL(frameChanged(int)), this, SLOT(updateFrame(int)));
 }
 
 void FrameBar::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
 
-    painter.fillRect(0, 0, width(), height(), Qt::black);
+    // draw region widget
+    //
+    painter.fillRect(0, 0, width(), UPPER_HEIGHT, Qt::gray);
+    {
+        QColor handleColor(0, 150, 0);
+        QColor hoverHandleColor(0, 255, 0);
+        QColor fillColor(0, 100, 0);
 
-    const int BORDER = _BORDER;
-    const int FRAME_WIDTH = _FRAME_WIDTH;
-    const int FRAME_HEIGHT = height() - (2*BORDER);
+        painter.fillRect(leftRegionHandle().x(), 1,
+                         rightRegionHandle().x() - leftRegionHandle().x(),
+                         UPPER_HEIGHT - 2,
+                         fillColor);
 
-    QColor colors[] = { Qt::white, Qt::gray };
-
-    for (int frame = 1; frame <= 240; frame++) {
-        int x = (frame-1)*FRAME_WIDTH+BORDER;
-        painter.fillRect(x, BORDER, FRAME_WIDTH, FRAME_HEIGHT, colors[frame%2]);
-
-        if (!_layer.isNull() && _layer->hasKeyFrame(frame)) {
-            const int ICON_WIDTH = FRAME_WIDTH - 2;
-            painter.fillRect(x + 1, BORDER + 2, ICON_WIDTH, ICON_WIDTH, Qt::black);
-        }
+        QColor leftColor = (_leftHighlighted && _draggingState == NO_DRAG || _draggingState == DRAG_LEFT) ?
+                    hoverHandleColor : handleColor;
+        QColor rightColor = (_rightHighlighted && _draggingState == NO_DRAG || _draggingState == DRAG_RIGHT) ?
+                    hoverHandleColor : handleColor;
+        painter.fillRect(leftRegionHandle(), leftColor);
+        painter.fillRect(rightRegionHandle(), rightColor);
+        ;
     }
-
-
-    const int currentFrame = _frameContext->currentFrame();
-    painter.setPen(QColor(255,0,255));
-    for (int i = 0; i < BORDER; i++)
-        painter.drawRect((currentFrame-1)*FRAME_WIDTH+i, i, FRAME_WIDTH+BORDER+BORDER-1-i*2, height()-1-i*2);
-    painter.fillRect((currentFrame-1)*FRAME_WIDTH+BORDER, BORDER, FRAME_WIDTH, FRAME_HEIGHT, QColor(255,0,255,60));
-
-    painter.end();
 }
 
 void FrameBar::setLayer(QSharedPointer<Source> layer)
@@ -48,18 +56,57 @@ void FrameBar::setLayer(QSharedPointer<Source> layer)
     _layer = layer;
 }
 
-void FrameBar::mouseReleaseEvent(QMouseEvent *event)
-{
-    int frame = 1 + (event->pos().x()-_BORDER) / _FRAME_WIDTH;
+#include <iostream>
 
-    if (frame != _frameContext->currentFrame()) {
-        _frameContext->setCurrentFrame(frame);
-        update();
+void FrameBar::mouseMoveEvent(QMouseEvent *event)
+{
+
+    _leftHighlighted = leftRegionHandle().contains(event->pos());
+    _rightHighlighted = rightRegionHandle().contains(event->pos());
+
+    if (_draggingState == DRAG_LEFT) {
+        int newLeftX = event->pos().x() - _handleOffset;
+        _boundsLeft = std::max(0.0f, std::min(_boundsRight, newLeftX / (float)width()));
+    } else if (_draggingState == DRAG_RIGHT) {
+        int newRightX = event->pos().x() - _handleOffset;
+        _boundsRight = std::min(1.0f, std::max(_boundsLeft, newRightX / (float)width()));
     }
 
+    update();
+}
+
+void FrameBar::mousePressEvent(QMouseEvent *event)
+{
+    if (_draggingState == NO_DRAG) {
+        if (leftRegionHandle().contains(event->pos())) {
+            _draggingState = DRAG_LEFT;
+            _handleOffset = event->pos().x() - leftRegionHandle().x();
+        } else if (rightRegionHandle().contains(event->pos())) {
+            _draggingState = DRAG_RIGHT;
+            _handleOffset = event->pos().x() - rightRegionHandle().x();
+        }
+    }
+}
+
+void FrameBar::mouseReleaseEvent(QMouseEvent *event)
+{
+    _draggingState = NO_DRAG;
+    update();
 }
 
 void FrameBar::updateFrame(int f)
 {
     update();
+}
+
+QRect FrameBar::leftRegionHandle()
+{
+    int left = (int)(width() * _boundsLeft);
+    return QRect(std::max(0, left-UPPER_HEIGHT), 0, UPPER_HEIGHT, UPPER_HEIGHT);
+}
+
+QRect FrameBar::rightRegionHandle()
+{
+    int right = (int)(width() * _boundsRight);
+    return QRect(std::min(right, width() - UPPER_HEIGHT), 0, UPPER_HEIGHT, UPPER_HEIGHT);
 }

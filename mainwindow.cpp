@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionColorKeyEffect, SIGNAL(triggered(bool)), this, SLOT(newColorKey()));
 
-    FrameContext* frameContext = new FrameContext();
+    TimeContext* frameContext = new TimeContext();
     connect(frameContext, SIGNAL(frameChanged(int)), this, SLOT(updateFrame(int)));
 
     // add attributes pane
@@ -185,7 +185,7 @@ void MainWindow::updateRecentImports()
         // remove all actions except the default one
         foreach (QObject* action, ui->menuRecentImports->children()) {
             if (action != ui->actionNoRecentImports)
-                ui->menuRecentImports->removeAction((QAction*)action);
+                ui->menuRecentImports->removeAction(qobject_cast<QAction*>(action));
         }
 
         // add back recent imports
@@ -197,6 +197,6 @@ void MainWindow::updateRecentImports()
 
 void MainWindow::importRecentFile()
 {
-    QAction* action = (QAction*)sender();
+    QAction* action = qobject_cast<QAction*>(sender());
     importFile(action->text());
 }

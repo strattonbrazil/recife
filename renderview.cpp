@@ -8,7 +8,7 @@
 #include "utils.h"
 #include "keyable.h"
 
-RenderView::RenderView(QWidget *parent, FrameContext* frameContext) :
+RenderView::RenderView(QWidget *parent, TimeContext* frameContext) :
     QGraphicsView(parent), _model(0), _viewportOverlay(0), _frameContext(frameContext)
 {
     setScene(new QGraphicsScene());
@@ -123,7 +123,7 @@ void RenderView::updateLayers(QModelIndex top, QModelIndex bottom)
     QPointF viewportOffset(VIEWPORT_BORDER, VIEWPORT_BORDER);
     for (int layerIndex = top.row(); layerIndex <= bottom.row(); layerIndex++) {
         QSharedPointer<Source> layer = _model->layer(layerIndex);
-        Mat image = _model->composite(200, layerIndex);
+        Mat image = _model->composite(currentFrame, layerIndex);
 
         KeyablePointF position = layer->properties()["position"].value<KeyablePointF>();
         QPointF scale = layer->properties()["scale"].value<KeyablePointF>().eval(currentFrame);
@@ -145,6 +145,8 @@ void RenderView::updateFrame(int frame)
 {
     if (_model->rowCount() == 0)
         return; // nothing to update
+
+
 
     // TODO: this is slow, probably better ways to help this
     //   * don't recreate layers that aren't changing

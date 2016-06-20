@@ -9,19 +9,29 @@ class FrameBar : public QWidget
 {
     Q_OBJECT
 public:
-    explicit FrameBar(QWidget *parent, FrameContext* frameContext);
+    explicit FrameBar(QWidget *parent, TimeContext* timeContext);
     void paintEvent(QPaintEvent *event);
     void setLayer(QSharedPointer<Source> layer);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
 
 public slots:
     void updateFrame(int f);
 private:
-    QSharedPointer<Source> _layer;
-    FrameContext* _frameContext;
+    QRect leftRegionHandle();
+    QRect rightRegionHandle();
 
-    static const int _BORDER = 1;
-    static const int _FRAME_WIDTH = 8;
+    QSharedPointer<Source> _layer;
+    TimeContext* _timeContext;
+
+    // for rendering the region
+    float _boundsLeft = 0.2f;
+    float _boundsRight = 0.8f;
+    int _draggingState;
+    int _handleOffset;
+    bool _leftHighlighted = false;
+    bool _rightHighlighted = false;
 };
 
 #endif // FRAMEBAR_H

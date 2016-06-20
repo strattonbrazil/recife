@@ -31,7 +31,7 @@ protected:
 
 QHash<QString,LayerEditor*> classEditors;
 
-LayerEditor* Source::editor(FrameContext* frameContext)
+LayerEditor* Source::editor(TimeContext* frameContext)
 {
     const QMetaObject *metaobject = metaObject();
     QString className = metaobject->className();
