@@ -7,15 +7,16 @@ class TimeContext : public QObject
 {
     Q_OBJECT
 public:
-    TimeContext(int frame=1);
+    TimeContext();
     int currentFrame();
+    float currentTime();
     float duration();
-    void setCurrentFrame(int f);
+    void setCurrentTime(float t);
     void updateFrame(int f);
 signals:
     void frameChanged(int);
 private:
-    int _currentFrame;
+    float _currentTime = 0.0f;
     float _duration = 60*60*2; // 2 hours in seconds
 };
 

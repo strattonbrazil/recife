@@ -1,6 +1,7 @@
 #include "framebar.h"
 #include <QPainter>
 #include <QMouseEvent>
+#include <QTime>
 
 #include "utils.h"
 
@@ -11,7 +12,8 @@ enum
 {
     NO_DRAG,
     DRAG_LEFT,
-    DRAG_RIGHT
+    DRAG_RIGHT,
+    DRAG_FRAME
 };
 
 FrameBar::FrameBar(QWidget *parent, TimeContext* timeContext) :
@@ -22,6 +24,28 @@ FrameBar::FrameBar(QWidget *parent, TimeContext* timeContext) :
     _draggingState = NO_DRAG;
 
     connect(_timeContext, SIGNAL(frameChanged(int)), this, SLOT(updateFrame(int)));
+}
+
+QString FrameBar::getLeftRegionTime()
+{
+    int totalSeconds = 60 * 60 * 2; // hard-code for now as 2 hours
+    int secondsOnLeft = totalSeconds * _boundsLeft;
+    int minutes = secondsOnLeft / 60;
+    int seconds = secondsOnLeft - (minutes * 60);
+
+    return QString("%1:%2").arg(minutes, 2, 10, QChar('0'))
+                           .arg(seconds, 2, 10, QChar('0'));
+}
+
+QString FrameBar::getRightRegionTime()
+{
+    int totalSeconds = _timeContext->duration(); // hard-code for now as 2 hours
+    int secondsOnRight = totalSeconds * _boundsRight;
+    int minutes = secondsOnRight / 60;
+    int seconds = secondsOnRight - (minutes * 60);
+
+    return QString("%1:%2").arg(minutes, 2, 10, QChar('0'))
+                           .arg(seconds, 2, 10, QChar('0'));
 }
 
 void FrameBar::paintEvent(QPaintEvent *event)
@@ -47,16 +71,33 @@ void FrameBar::paintEvent(QPaintEvent *event)
                     hoverHandleColor : handleColor;
         painter.fillRect(leftRegionHandle(), leftColor);
         painter.fillRect(rightRegionHandle(), rightColor);
-        ;
     }
+
+    // draw the timeline widget
+    //
+    {
+        QColor timelineColor(0, 160, 0);
+        painter.fillRect(0, UPPER_HEIGHT, width(), LOWER_HEIGHT, timelineColor);
+
+        painter.drawText(10, UPPER_HEIGHT, getLeftRegionTime());
+
+        float seconds = _timeContext->currentTime();
+        float secondsLeft = _timeContext->duration() * _boundsLeft;
+        float secondsRight = _timeContext->duration() * _boundsRight;
+        const int markerX = ((seconds - secondsLeft) / (secondsRight - secondsLeft)) * width();
+        painter.drawLine(markerX, UPPER_HEIGHT, markerX, height());
+
+        QString rightRegionTime = getRightRegionTime();
+        int strWidth = painter.fontMetrics().width(rightRegionTime);
+        painter.drawText(width() - strWidth, UPPER_HEIGHT, rightRegionTime);
+    }
+
 }
 
 void FrameBar::setLayer(QSharedPointer<Source> layer)
 {
     _layer = layer;
 }
-
-#include <iostream>
 
 void FrameBar::mouseMoveEvent(QMouseEvent *event)
 {
@@ -84,8 +125,16 @@ void FrameBar::mousePressEvent(QMouseEvent *event)
         } else if (rightRegionHandle().contains(event->pos())) {
             _draggingState = DRAG_RIGHT;
             _handleOffset = event->pos().x() - rightRegionHandle().x();
+        } else if (event->pos().y() > UPPER_HEIGHT) {
+            float secondsLeft = _timeContext->duration() * _boundsLeft;
+            float secondsRight = _timeContext->duration() * _boundsRight;
+            float pickSeconds = secondsLeft + (secondsRight - secondsLeft) * (event->x() / (float)width());
+            _timeContext->setCurrentTime(pickSeconds);
+            _draggingState = DRAG_FRAME;
         }
     }
+
+    update();
 }
 
 void FrameBar::mouseReleaseEvent(QMouseEvent *event)

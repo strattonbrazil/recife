@@ -255,21 +255,18 @@ VideoSource::VideoSource(QString fileName)
 
 Mat VideoSource::renderBase(int frame)
 {
-    /*
-    QSharedPointer<CvCapture> video(cvCaptureFromFile(_videoPath.toStdString()));
-    IplImage* img = 0;
-    if (!cvGrabFrame(video.data())) {
-        std::err << "couldn't get frame" << std::endl;
-        return;
-    }
-
-    img =
-      */
     VideoCapture capture(_videoPath.toStdString());
+    const int NUM_FRAMES = capture.get(CV_CAP_PROP_FRAME_COUNT);
+    const int FRAME_WIDTH = capture.get(CV_CAP_PROP_FRAME_WIDTH);
+    const int FRAME_HEIGHT = capture.get(CV_CAP_PROP_FRAME_HEIGHT);
 
-    Mat f;
-    for (int i = 0; i < frame; i++) {
-        capture >> f;
+    if (frame > NUM_FRAMES) {
+        return Mat(FRAME_WIDTH, FRAME_HEIGHT, CV_8UC3, Scalar(0,0,0));
+    } else {
+        Mat f;
+        for (int i = 0; i < frame; i++) {
+            capture >> f;
+        }
+        return f;
     }
-    return f;
 }

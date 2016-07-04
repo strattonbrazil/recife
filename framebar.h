@@ -19,6 +19,8 @@ public:
 public slots:
     void updateFrame(int f);
 private:
+    QString getLeftRegionTime();
+    QString getRightRegionTime();
     QRect leftRegionHandle();
     QRect rightRegionHandle();
 

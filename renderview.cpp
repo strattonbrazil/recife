@@ -22,26 +22,6 @@ RenderView::RenderView(QWidget *parent, TimeContext* frameContext) :
     connect(frameContext, SIGNAL(frameChanged(int)), this, SLOT(updateFrame(int)));
 }
 
-/*
-void RenderView::paintEvent(QPaintEvent *event)
-{
-    QPainter painter(this);
-    //painter.setRenderHint(QPainter::Antialiasing);
-
-    painter.fillRect(0, 0, width(), height(), Qt::black);
-
-    Mat image = _model->composite(1);
-
-    QImage img = convertMatToQImage(image);
-    QPixmap pixmap = QPixmap::fromImage(img);
-
-    //painter.drawImage(0, 0, img);
-    painter.drawPixmap(0,0,200,200,pixmap);
-
-    painter.end();
-}
-*/
-
 void RenderView::drawForeground(QPainter *painter, const QRectF &rect)
 {
     //QRect viewportRect = mapFromScene(_viewportOverlay->boundingRect()).boundingRect();
