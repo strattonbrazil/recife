@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionColorKeyEffect, SIGNAL(triggered(bool)), this, SLOT(newColorKey()));
 
     TimeContext* frameContext = new TimeContext();
-    connect(frameContext, SIGNAL(frameChanged(int)), this, SLOT(updateFrame(int)));
+    //connect(frameContext, SIGNAL(frameChanged(int)), this, SLOT(updateFrame(int)));
 
     // add attributes pane
     QDockWidget* attributeListDock = new QDockWidget();
@@ -76,7 +76,7 @@ void MainWindow::importFile(QString fileName)
 {
     // pop open a dialog
     if (fileName == "") {
-        QStringList extensions = Source::supportedExtensions();
+        QStringList extensions = Layer::supportedExtensions();
         QStringList extensionsWildCarded;
         foreach (QString extension, extensions) {
             extensionsWildCarded.append("*." + extension);
@@ -102,7 +102,7 @@ void MainWindow::importFile(QString fileName)
     }
     updateRecentImports();
 
-    _layerModel->addSource(Source::getSource(fileName));
+    _layerModel->addSource(Layer::getSource(fileName));
 }
 
 void MainWindow::newProject()
@@ -125,7 +125,7 @@ void MainWindow::layerSelected(const QModelIndex & current, const QModelIndex & 
 
     bool connectEffectSelection = _effectsPane->effectsList()->selectionModel() == 0;
 
-    QSharedPointer<Source> layer = _layerModel->layer(current.row());
+    QSharedPointer<Layer> layer = _layerModel->layer(current.row());
     _effectsPane->setModel(layer->effectsModel());
 
     if (connectEffectSelection) {
@@ -138,7 +138,7 @@ void MainWindow::layerSelected(const QModelIndex & current, const QModelIndex & 
 
 void MainWindow::effectSelected(const QModelIndex & current, const QModelIndex & previous)
 {
-    QSharedPointer<Source> layer = _layersPane->selectedLayer();
+    QSharedPointer<Layer> layer = _layersPane->selectedLayer();
     QSharedPointer<Effect> effect = layer->effectsModel()->effect(current.row()); // _effectsPane->selectedEffect();
 
     _attributesPane->setEffect(effect);
@@ -153,7 +153,7 @@ void MainWindow::rerender(QSharedPointer<Source> layer)
 
 void MainWindow::newColorKey()
 {
-    QSharedPointer<Source> layer = _layersPane->selectedLayer();
+    QSharedPointer<Layer> layer = _layersPane->selectedLayer();
 
     layer->addEffect(QSharedPointer<Effect>(new ColorKeyEffect()));
 
@@ -163,12 +163,14 @@ void MainWindow::newColorKey()
     //rerender(layer);
 }
 
+/*
 void MainWindow::updateFrame(int frame)
 {
     _attributesPane->refresh(); //Layer(_layersPane->selectedLayer());
     //set
     //std::cout << "need to change layer" << std::endl;
 }
+*/
 
 void MainWindow::updateRecentImports()
 {

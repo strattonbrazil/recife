@@ -10,9 +10,9 @@ requirements to build
 
 TODO
 ======
+* bug - app crash on timeline change without layer (or without selected layer)
 * feature - add video source
 * feature - add js validation to inputs
-* clean up - rename 'source' references to 'layer'
 * feature - add resolution support
 * feature - render to video/image file
 * feature - save session to disk

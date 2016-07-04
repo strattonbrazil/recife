@@ -1,7 +1,6 @@
 #include "layereditor.h"
 
 #include <iostream>
-#include <QLineEdit>
 #include <QPushButton>
 #include <stdexcept>
 
@@ -12,12 +11,19 @@ LayerEditor::LayerEditor(QWidget *parent, TimeContext* frameContext) : QWidget(p
 {
 }
 
-void LayerEditor::setLayer(QSharedPointer<Source> layer)
+#include <iostream>
+
+void LayerEditor::setLayer(QSharedPointer<Layer> layer)
 {
     _layer = layer;
 
+    updateAttributes();
+}
+
+void LayerEditor::updateAttributes()
+{
     // put current layer values in inputs
-    QMap<QString, QVariant> properties = layer->properties();
+    QMap<QString, QVariant> properties = _layer->properties();
     QMap<QString, QVariant>::iterator i;
     int row = 0;
 
@@ -93,10 +99,12 @@ void LayerEditor::registerButton(QString name, QPushButton* button)
     _buttons.insert(name, button);
 }
 
-void LayerEditor::updateTextProperty()
+void LayerEditor::updateTextProperty(QLineEdit* lineInput)
 {
-    QLineEdit* editor = qobject_cast<QLineEdit*>(sender());
-    QString propertyName = editor->property("variable").toString();
+    if (lineInput == 0) {
+        lineInput = qobject_cast<QLineEdit*>(sender());
+    }
+    QString propertyName = lineInput->property("variable").toString();
 
     QVariant property = _layer->properties()[propertyName];
     int type = property.userType();
@@ -106,17 +114,21 @@ void LayerEditor::updateTextProperty()
     if (type == qMetaTypeId<KeyablePoint>()) {
 
     } else if (type == qMetaTypeId<KeyablePointF>()) {
-        QPointF newValue = stringToPointF(editor->text());
+        QPointF newValue = stringToPointF(lineInput->text());
         KeyablePointF kp = property.value<KeyablePointF>();
-        if (!kp.hasKeyFrames()) {
-            kp.setPointF(newValue);
-        } else if (kp.hasKeyFrameAt(currentFrame)) {
+        if (kp.hasKeyFrameAt(currentFrame)) {
             kp.setPointF(newValue, currentFrame);
+        } else {
+            kp.setPointF(newValue, currentFrame, false);
         }
-
 
         _layer->setProperty(propertyName, QVariant::fromValue(kp));
     }
+}
+
+void LayerEditor::updateFrame(int frame)
+{
+    updateAttributes();
 }
 
 void LayerEditor::setKeyFrame()

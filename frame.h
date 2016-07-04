@@ -17,7 +17,7 @@ signals:
     void frameChanged(int);
 private:
     float _currentTime = 0.0f;
-    float _duration = 60*60*2; // 2 hours in seconds
+    float _duration = 60*2; // 2 minutes in seconds
 };
 
 #endif // FRAME_H

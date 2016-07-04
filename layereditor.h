@@ -2,8 +2,9 @@
 #define LAYEREDITOR_H
 
 #include <QPushButton>
+#include <QLineEdit>
 
-#include "source.h"
+#include "layer.h"
 
 class LayerEditor : public QWidget
 {
@@ -11,14 +12,17 @@ class LayerEditor : public QWidget
 
 public:
     explicit LayerEditor(QWidget *parent, TimeContext* frameContext);
-    void setLayer(QSharedPointer<Source> layer);
+    void setLayer(QSharedPointer<Layer> layer);
     void registerInput(QString name, QWidget* widget);
     void registerButton(QString name, QPushButton* button);
+    void updateFrame(int frame);
 public slots:
-    void updateTextProperty();
+    void updateTextProperty(QLineEdit* lineInput = 0);
     void setKeyFrame();
 private:
-    QSharedPointer<Source> _layer;
+    void updateAttributes();
+
+    QSharedPointer<Layer> _layer;
     QHash<QString,QWidget*> _inputs;
     QHash<QString,QPushButton*> _buttons;
     TimeContext* _frameContext;

@@ -31,10 +31,10 @@ public slots:
     void effectSelected(const QModelIndex & current, const QModelIndex & previous);
 
     void newColorKey();
-    void updateFrame(int frame);
+    //void updateFrame(int frame);
 private:
     void setProjectActive(bool status);
-    void rerender(QSharedPointer<Source> layer);
+    void rerender(QSharedPointer<Layer> layer);
     void updateRecentImports();
 
     Ui::MainWindow *ui;

@@ -23,13 +23,14 @@ public:
     KeyablePointF(float x=0, float y=0);
     bool hasKeyFrames();
     bool hasKeyFrameAt(int frame);
-    void setPointF(QPointF p, int frame=0);
+    void setPointF(QPointF p, int frame, bool persist = true);
     QPointF eval(int frame);
     void setKeyFrame(int frame);
     void removeKeyFrame(int frame);
 private:
     QPointF _p;
     QMap<int,QPointF> _keys;
+    int _lastTempFrame = 0;
 };
 Q_DECLARE_METATYPE(KeyablePointF);
 

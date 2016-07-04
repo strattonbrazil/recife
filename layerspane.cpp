@@ -23,17 +23,17 @@ QListView* LayersPane::layersList()
     return ui->layersList;
 }
 
-QSharedPointer<Source> LayersPane::selectedLayer()
+QSharedPointer<Layer> LayersPane::selectedLayer()
 {
     QModelIndexList indices = ui->layersList->selectionModel()->selectedRows();
     if (indices.length() == 0)
-        return QSharedPointer<Source>(0);
+        return QSharedPointer<Layer>(0);
 
     LayerModel* model = qobject_cast<LayerModel*>(ui->layersList->model());
     return model->layer(indices.first().row());
 }
 
-void LayersPane::updateLayer(QSharedPointer<Source> layer)
+void LayersPane::updateLayer(QSharedPointer<Layer> layer)
 {
     LayerModel* model = qobject_cast<LayerModel*>(ui->layersList->model());
     model->updateLayer(layer);

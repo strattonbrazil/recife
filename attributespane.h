@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QSet>
-#include "source.h"
+#include "layer.h"
 #include "framebar.h"
 
 namespace Ui {
@@ -18,16 +18,17 @@ public:
     explicit AttributesPane(QWidget *parent, TimeContext* frameContext);
     ~AttributesPane();
     
-    void refresh();
-    void setLayer(QSharedPointer<Source> layer);
+    void setLayer(QSharedPointer<Layer> layer);
     void setEffect(QSharedPointer<Effect> effect);
+public slots:
+    void updateFrame(int frame);
 private:
     Ui::AttributesPane *ui;
-    QSharedPointer<Source> _layer;
+    QSharedPointer<Layer> _layer;
     QSharedPointer<Effect> _effect;
     LayerEditor* _currentEditor;
     QSet<QWidget*> _preservedWidgets;
-    TimeContext* _frameContext;
+    TimeContext* _timeContext;
 };
 
 #endif // ATTRIBUTESPANE_H

@@ -19,8 +19,8 @@ public:
     ~LayersPane();
     void setModel(LayerModel* model);
     QListView* layersList();
-    QSharedPointer<Source> selectedLayer();
-    void updateLayer(QSharedPointer<Source> layer);
+    QSharedPointer<Layer> selectedLayer();
+    void updateLayer(QSharedPointer<Layer> layer);
 private:
     Ui::LayersPane *ui;
 };

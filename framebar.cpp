@@ -28,7 +28,7 @@ FrameBar::FrameBar(QWidget *parent, TimeContext* timeContext) :
 
 QString FrameBar::getLeftRegionTime()
 {
-    int totalSeconds = 60 * 60 * 2; // hard-code for now as 2 hours
+    int totalSeconds = _timeContext->duration();
     int secondsOnLeft = totalSeconds * _boundsLeft;
     int minutes = secondsOnLeft / 60;
     int seconds = secondsOnLeft - (minutes * 60);
@@ -39,7 +39,7 @@ QString FrameBar::getLeftRegionTime()
 
 QString FrameBar::getRightRegionTime()
 {
-    int totalSeconds = _timeContext->duration(); // hard-code for now as 2 hours
+    int totalSeconds = _timeContext->duration();
     int secondsOnRight = totalSeconds * _boundsRight;
     int minutes = secondsOnRight / 60;
     int seconds = secondsOnRight - (minutes * 60);
@@ -94,7 +94,7 @@ void FrameBar::paintEvent(QPaintEvent *event)
 
 }
 
-void FrameBar::setLayer(QSharedPointer<Source> layer)
+void FrameBar::setLayer(QSharedPointer<Layer> layer)
 {
     _layer = layer;
 }

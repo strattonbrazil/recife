@@ -6,7 +6,7 @@
 #include <opencv2/core/core.hpp>
 //#include <opencv2/highgui/highgui.hpp>
 
-#include "source.h"
+#include "layer.h"
 
 using namespace cv;
 
@@ -18,15 +18,15 @@ public:
     int rowCount(const QModelIndex &parent=QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role) const;
 
-    void addSource(QSharedPointer<Source> source);
+    void addSource(QSharedPointer<Layer> source);
     Mat composite(int frame, int layer);
-    QSharedPointer<Source> layer(int layer);
-    void updateLayer(QSharedPointer<Source> layer);
+    QSharedPointer<Layer> layer(int layer);
+    void updateLayer(QSharedPointer<Layer> layer);
 
 public slots:
-    void layerChanged(Source* layer);
+    void layerChanged(Layer* layer);
 private:
-    QVector<QSharedPointer<Source> > _sources;
+    QVector<QSharedPointer<Layer> > _sources;
     
 };
 

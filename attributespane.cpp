@@ -4,12 +4,14 @@
 #include "layereditor.h"
 
 AttributesPane::AttributesPane(QWidget *parent, TimeContext* frameContext) :
-    QWidget(parent), _frameContext(frameContext), _currentEditor(0),
+    QWidget(parent), _timeContext(frameContext), _currentEditor(0),
     ui(new Ui::AttributesPane)
 {
     ui->setupUi(this);
     ui->stackedWidget->setCurrentWidget(ui->noAttributesPage);
     ui->effectAttrsLabel->hide();
+
+    connect(_timeContext, SIGNAL(frameChanged(int)), this, SLOT(updateFrame(int)));
 }
 
 AttributesPane::~AttributesPane()
@@ -17,20 +19,14 @@ AttributesPane::~AttributesPane()
     delete ui;
 }
 
-void AttributesPane::refresh()
-{
-    if (_currentEditor)
-        _currentEditor->setLayer(_layer);
-}
-
-void AttributesPane::setLayer(QSharedPointer<Source> layer)
+void AttributesPane::setLayer(QSharedPointer<Layer> layer)
 {
     _layer = layer;
 
     QVBoxLayout* layerLayout = qobject_cast<QVBoxLayout*>(ui->layerAttrsFrame->layout());
     clearLayout(layerLayout, _preservedWidgets);
 
-    LayerEditor* editor = _layer->editor(_frameContext);
+    LayerEditor* editor = _layer->editor(_timeContext);
     layerLayout->addWidget(editor);
     _preservedWidgets.insert(editor);
 
@@ -49,4 +45,9 @@ void AttributesPane::setEffect(QSharedPointer<Effect> effect)
     effectLayout->addWidget(_effect->editor());
     //effectLayout->addStretch();
     ui->effectAttrsLabel->show();
+}
+
+void AttributesPane::updateFrame(int frame)
+{
+    _currentEditor->updateFrame(frame);
 }

@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "source.h"
+#include "layer.h"
 
 class FrameBar : public QWidget
 {
@@ -11,7 +11,7 @@ class FrameBar : public QWidget
 public:
     explicit FrameBar(QWidget *parent, TimeContext* timeContext);
     void paintEvent(QPaintEvent *event);
-    void setLayer(QSharedPointer<Source> layer);
+    void setLayer(QSharedPointer<Layer> layer);
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
@@ -24,12 +24,12 @@ private:
     QRect leftRegionHandle();
     QRect rightRegionHandle();
 
-    QSharedPointer<Source> _layer;
+    QSharedPointer<Layer> _layer;
     TimeContext* _timeContext;
 
     // for rendering the region
-    float _boundsLeft = 0.2f;
-    float _boundsRight = 0.8f;
+    float _boundsLeft = 0.0f;
+    float _boundsRight = 1.0f;
     int _draggingState;
     int _handleOffset;
     bool _leftHighlighted = false;

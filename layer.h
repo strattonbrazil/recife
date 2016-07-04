@@ -1,5 +1,5 @@
-#ifndef SOURCE_H
-#define SOURCE_H
+#ifndef LAYER_H
+#define LAYER_H
 
 #include <QSharedPointer>
 #include <QVector>
@@ -13,7 +13,7 @@ using namespace cv;
 //class FileHandler;
 class LayerEditor;
 
-class Source : public QObject
+class Layer : public QObject
 {
     Q_OBJECT
 
@@ -25,7 +25,7 @@ public:
     LayerEditor* editor(TimeContext* frameContext);
 
     static QStringList supportedExtensions();
-    static QSharedPointer<Source> getSource(QString fileName);
+    static QSharedPointer<Layer> getSource(QString fileName);
     EffectsModel* effectsModel();
     void addEffect(QSharedPointer<Effect> effect);
 
@@ -36,7 +36,7 @@ public:
     void setKeyFrame(QString propertyName, int frame);
     void removeKeyFrame(QString propertyName, int frame);
 signals:
-    void layerChanged(Source* layer);
+    void layerChanged(Layer* layer);
 protected:
     EffectsModel* _effectsList;
     void emitUpdate();
@@ -48,7 +48,7 @@ private:
     int _id;
 };
 
-class ImageSource : public Source
+class ImageSource : public Layer
 {
     Q_OBJECT
 
@@ -60,7 +60,7 @@ private:
     QPoint _resolution;
 };
 
-class VideoSource : public Source
+class VideoSource : public Layer
 {
     Q_OBJECT
 
@@ -73,4 +73,4 @@ private:
 
 
 
-#endif // SOURCE_H
+#endif // LAYER_H

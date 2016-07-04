@@ -13,6 +13,7 @@ RenderView::RenderView(QWidget *parent, TimeContext* frameContext) :
 {
     setScene(new QGraphicsScene());
     //this->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    setBackgroundBrush(QBrush(Qt::gray, Qt::SolidPattern));
 
     this->setDragMode(QGraphicsView::ScrollHandDrag);
 
@@ -38,17 +39,13 @@ void RenderView::drawForeground(QPainter *painter, const QRectF &rect)
 
 void RenderView::drawBackground(QPainter *painter, const QRectF &rect)
 {
+    QGraphicsView::drawBackground(painter, rect);
+
     QRect viewportRect = _viewportOverlay->boundingRect().toRect();
     viewportRect.setLeft(viewportRect.left()+VIEWPORT_BORDER);
     viewportRect.setRight(viewportRect.right()-VIEWPORT_BORDER);
     viewportRect.setTop(viewportRect.top()+VIEWPORT_BORDER);
     viewportRect.setBottom(viewportRect.bottom()-VIEWPORT_BORDER);
-
-    painter->fillRect(0, 0, scene()->width(), scene()->height(), Qt::black);
-
-    QImage checkers;
-    checkers.load("/home/josh.stratton/Desktop/checkers.png");
-    painter->drawImage(0, 0, checkers);
 }
 
 void RenderView::setModel(LayerModel *model)
@@ -90,7 +87,7 @@ void RenderView::updateLayers(QModelIndex top, QModelIndex bottom)
 {
     // remove changed layers
     for (int layerIndex = top.row(); layerIndex <= bottom.row(); layerIndex++) {
-        QSharedPointer<Source> layer = _model->layer(layerIndex);
+        QSharedPointer<Layer> layer = _model->layer(layerIndex);
         if (_layerIdToItem.contains(layer->id())) {
             QGraphicsItem* item = _layerIdToItem[layer->id()];
             scene()->removeItem(item);
@@ -102,7 +99,7 @@ void RenderView::updateLayers(QModelIndex top, QModelIndex bottom)
 
     QPointF viewportOffset(VIEWPORT_BORDER, VIEWPORT_BORDER);
     for (int layerIndex = top.row(); layerIndex <= bottom.row(); layerIndex++) {
-        QSharedPointer<Source> layer = _model->layer(layerIndex);
+        QSharedPointer<Layer> layer = _model->layer(layerIndex);
         Mat image = _model->composite(currentFrame, layerIndex);
 
         KeyablePointF position = layer->properties()["position"].value<KeyablePointF>();

@@ -18,11 +18,11 @@ QVariant LayerModel::data(const QModelIndex &index, int role) const
     return QVariant(_sources[index.row()]->label());
 }
 
-void LayerModel::addSource(QSharedPointer<Source> source)
+void LayerModel::addSource(QSharedPointer<Layer> source)
 {
     _sources.append(source);
 
-    connect(source.data(), SIGNAL(layerChanged(Source*)), this, SLOT(layerChanged(Source*)));
+    connect(source.data(), SIGNAL(layerChanged(Layer*)), this, SLOT(layerChanged(Layer*)));
 
     QModelIndex topLeft = createIndex(0, 0);
     emit(dataChanged(topLeft, topLeft));
@@ -33,12 +33,12 @@ Mat LayerModel::composite(int frame, int layer)
     return _sources[layer]->render(frame);
 }
 
-QSharedPointer<Source> LayerModel::layer(int layer)
+QSharedPointer<Layer> LayerModel::layer(int layer)
 {
     return _sources[layer];
 }
 
-void LayerModel::updateLayer(QSharedPointer<Source> layer)
+void LayerModel::updateLayer(QSharedPointer<Layer> layer)
 {
     // TODO: actually find the right model index instead of sending
     // all of them
@@ -48,7 +48,7 @@ void LayerModel::updateLayer(QSharedPointer<Source> layer)
     emit(dataChanged(topLeft, bottomLeft));
 }
 
-void LayerModel::layerChanged(Source *layer)
+void LayerModel::layerChanged(Layer *layer)
 {
     // TODO: actually find the right model index instead of sending
     // all of them

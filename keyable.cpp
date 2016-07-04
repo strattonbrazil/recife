@@ -24,16 +24,26 @@ bool KeyablePointF::hasKeyFrameAt(int frame)
     return _keys.contains(frame);
 }
 
-void KeyablePointF::setPointF(QPointF p, int frame)
+void KeyablePointF::setPointF(QPointF p, int frame, bool persist)
 {
-    if (frame == 0)
-        _p = p;
-    else
+    if (persist) {
+        if (frame == _lastTempFrame)
+            _lastTempFrame = 0;
         _keys.insert(frame, p);
+    } else {
+        _p = p;
+        _lastTempFrame = frame;
+    }
 }
 
 QPointF KeyablePointF::eval(int frame)
 {
+    if (_lastTempFrame == frame) {
+        return _p;
+    } else {
+        _lastTempFrame = 0;
+    }
+
     if (_keys.size() == 0)
         return _p;
 
@@ -57,6 +67,7 @@ QPointF KeyablePointF::eval(int frame)
         previousFrame = i.key();
         previousValue = i.value();
     }
+
     return previousValue; // after last key frame
 }
 

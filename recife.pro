@@ -16,7 +16,6 @@ LIBS += -lopencv_core -lopencv_highgui -lopencv_ocl -lopencv_imgproc
 SOURCES += main.cpp\
         mainwindow.cpp \
     layermodel.cpp \
-    source.cpp \
     compositorpane.cpp \
     renderview.cpp \
     utils.cpp \
@@ -29,11 +28,11 @@ SOURCES += main.cpp\
     framebar.cpp \
     keyable.cpp \
     frame.cpp \
-    layereditor.cpp
+    layereditor.cpp \
+    layer.cpp
 
 HEADERS  += mainwindow.h \
     layermodel.h \
-    source.h \
     compositorpane.h \
     renderview.h \
     utils.h \
@@ -46,7 +45,8 @@ HEADERS  += mainwindow.h \
     framebar.h \
     keyable.h \
     frame.h \
-    layereditor.h
+    layereditor.h \
+    layer.h
 
 FORMS    += mainwindow.ui \
     compositorpane.ui \

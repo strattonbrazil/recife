@@ -1,4 +1,4 @@
-#include "source.h"
+#include "layer.h"
 
 #include <iostream>
 #include <QStringList>
@@ -24,14 +24,14 @@ class FileHandler
 {
 public:
     QStringList supportedExtensions() { return _supportedExtensions; }
-    virtual QSharedPointer<Source> process(QString fileName) = 0;
+    virtual QSharedPointer<Layer> process(QString fileName) = 0;
 protected:
     QStringList _supportedExtensions;
 };
 
 QHash<QString,LayerEditor*> classEditors;
 
-LayerEditor* Source::editor(TimeContext* frameContext)
+LayerEditor* Layer::editor(TimeContext* frameContext)
 {
     const QMetaObject *metaobject = metaObject();
     QString className = metaobject->className();
@@ -86,9 +86,9 @@ public:
         _supportedExtensions.append("png");
     }
 
-    QSharedPointer<Source> process(QString fileName)
+    QSharedPointer<Layer> process(QString fileName)
     {
-        return QSharedPointer<Source>(new ImageSource(fileName));
+        return QSharedPointer<Layer>(new ImageSource(fileName));
     }
 };
 
@@ -100,9 +100,9 @@ public:
         _supportedExtensions.append("mov");
     }
 
-    QSharedPointer<Source> process(QString fileName)
+    QSharedPointer<Layer> process(QString fileName)
     {
-        return QSharedPointer<Source>(new VideoSource(fileName));
+        return QSharedPointer<Layer>(new VideoSource(fileName));
     }
 };
 
@@ -116,7 +116,7 @@ void validate()
     }
 }
 
-Mat Source::render(int frame)
+Mat Layer::render(int frame)
 {
     Mat base = renderBase(frame);
     Mat processed = _effectsList->process(base, frame);
@@ -124,7 +124,7 @@ Mat Source::render(int frame)
     return processed;
 }
 
-QStringList Source::supportedExtensions()
+QStringList Layer::supportedExtensions()
 {
     validate();
 
@@ -143,7 +143,7 @@ QStringList Source::supportedExtensions()
 }
 
 int idCount = 1;
-QSharedPointer<Source> Source::getSource(QString fileName)
+QSharedPointer<Layer> Layer::getSource(QString fileName)
 {
     validate();
 
@@ -151,7 +151,7 @@ QSharedPointer<Source> Source::getSource(QString fileName)
 
     foreach(FileHandler* handler, fileHandlers) {
         if (handler->supportedExtensions().contains(fileInfo.suffix())) {
-            QSharedPointer<Source> src = handler->process(fileName);
+            QSharedPointer<Layer> src = handler->process(fileName);
             src->_id = idCount++;
 
             src->_properties.insert(QString("position"), QVariant::fromValue(KeyablePointF()));
@@ -165,19 +165,19 @@ QSharedPointer<Source> Source::getSource(QString fileName)
     throw std::runtime_error("failed to find appropriate importer");
 }
 
-EffectsModel* Source::effectsModel()
+EffectsModel* Layer::effectsModel()
 {
     if (_effectsList == 0)
         _effectsList = new EffectsModel();
     return _effectsList;
 }
 
-void Source::addEffect(QSharedPointer<Effect> effect)
+void Layer::addEffect(QSharedPointer<Effect> effect)
 {
     _effectsList->addEffect(effect);
 }
 
-void Source::setKeyFrame(QString propertyName, int frame)
+void Layer::setKeyFrame(QString propertyName, int frame)
 {
     int type = _properties[propertyName].userType();
 
@@ -190,7 +190,7 @@ void Source::setKeyFrame(QString propertyName, int frame)
     }
 }
 
-void Source::removeKeyFrame(QString propertyName, int frame)
+void Layer::removeKeyFrame(QString propertyName, int frame)
 {
     int type = _properties[propertyName].userType();
 
@@ -203,17 +203,17 @@ void Source::removeKeyFrame(QString propertyName, int frame)
     }
 }
 
-void Source::setProperty(QString propertyName, QVariant value)
+void Layer::setProperty(QString propertyName, QVariant value)
 {
     _properties[propertyName] = value;
     emitUpdate();
 }
 
-QMap<QString,QVariant> Source::properties() {
+QMap<QString,QVariant> Layer::properties() {
     return _properties;
 }
 
-bool Source::hasKeyFrame(int frame)
+bool Layer::hasKeyFrame(int frame)
 {
     QMap<QString,QVariant>::Iterator i;
     for (i = _properties.begin(); i != _properties.end(); i++) {
@@ -230,7 +230,7 @@ bool Source::hasKeyFrame(int frame)
     return false;
 }
 
-void Source::emitUpdate()
+void Layer::emitUpdate()
 {
     emit(layerChanged(this));
 }
@@ -261,7 +261,7 @@ Mat VideoSource::renderBase(int frame)
     const int FRAME_HEIGHT = capture.get(CV_CAP_PROP_FRAME_HEIGHT);
 
     if (frame > NUM_FRAMES) {
-        return Mat(FRAME_WIDTH, FRAME_HEIGHT, CV_8UC3, Scalar(0,0,0));
+        return Mat(FRAME_HEIGHT, FRAME_WIDTH, CV_8UC3, Scalar(0,0,0));
     } else {
         Mat f;
         for (int i = 0; i < frame; i++) {
